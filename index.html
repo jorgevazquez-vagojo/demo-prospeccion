@@ -1,0 +1,2872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redegal - Sistema Inteligente de Prospección Comercial</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --redegal-dark: #0f1729;
+  --redegal-blue: #1a3a6e;
+  --redegal-accent: #3b82f6;
+  --redegal-light: #60a5fa;
+  --boostic: #6636ce;
+  --boostic-light: #8b5cf6;
+  --binnacle: #06b6d4;
+  --binnacle-light: #22d3ee;
+  --tech: #f97316;
+  --tech-light: #fb923c;
+  --digital: #10b981;
+  --digital-light: #34d399;
+  --bg-gradient: linear-gradient(135deg, #0f1729 0%, #1a2744 50%, #0f2030 100%);
+  --glass: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.1);
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-bright: #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--redegal-dark);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ====== PARTICLES BACKGROUND ====== */
+#particles-canvas {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  pointer-events: none;
+}
+
+/* ====== PROGRESS BAR ====== */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--redegal-accent), var(--boostic), var(--binnacle), var(--tech), var(--digital));
+  z-index: 1000;
+  transition: width 0.5s ease;
+}
+
+/* ====== SLIDE CONTAINER ====== */
+.slides-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+  visibility: visible;
+}
+
+.slide.exit-up {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+/* ====== TYPOGRAPHY ====== */
+.slide-tag {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--redegal-accent);
+  margin-bottom: 16px;
+}
+
+.slide-title {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.slide-title .accent { color: var(--redegal-accent); }
+.slide-title .boostic-color { color: var(--boostic); }
+.slide-title .binnacle-color { color: var(--binnacle); }
+.slide-title .tech-color { color: var(--tech); }
+.slide-title .digital-color { color: var(--digital); }
+
+.slide-subtitle {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-align: center;
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+/* ====== GLASS CARDS ====== */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-card-sm {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(20px);
+}
+
+/* ====== GRIDS ====== */
+.grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:24px; width:100%; max-width:1100px; }
+.grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; width:100%; max-width:1200px; }
+.grid-4 { display:grid; grid-template-columns: repeat(4,1fr); gap:20px; width:100%; max-width:1200px; }
+
+/* ====== PILLAR CARDS ====== */
+.pillar-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent, var(--redegal-accent));
+}
+
+.pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-accent, var(--redegal-accent));
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.pillar-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.pillar-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+
+.pillar-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ====== PIPELINE ====== */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 30px;
+}
+
+.pipeline-step {
+  flex: 1;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 18px 14px;
+  text-align: center;
+  position: relative;
+  transition: all 0.5s ease;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.pipeline-step.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pipeline-step.highlight {
+  border-color: var(--step-color, var(--redegal-accent));
+  box-shadow: 0 0 25px rgba(59,130,246,0.15);
+}
+
+.pipeline-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--step-color, var(--redegal-accent));
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.pipeline-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.pipeline-who {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.pipeline-arrow {
+  color: var(--text-dim);
+  font-size: 18px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.pipeline-arrow.visible { opacity: 1; }
+
+/* ====== EXAMPLE SLIDES ====== */
+.example-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.example-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.example-client {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-bright);
+}
+
+.example-sector {
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.analysis-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 24px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.analysis-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.analysis-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.data-row:last-child { border-bottom: none; }
+
+.data-label {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.data-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.data-value.good { color: #34d399; }
+.data-value.warning { color: #fbbf24; }
+.data-value.bad { color: #f87171; }
+.data-value.neutral { color: var(--text); }
+
+/* ====== SCORE BAR ====== */
+.score-section {
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 16px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.5s ease;
+}
+
+.score-row.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.score-line-name {
+  font-size: 14px;
+  font-weight: 600;
+  width: 130px;
+  text-align: right;
+}
+
+.score-bar-bg {
+  flex: 1;
+  height: 28px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 14px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.score-bar-fill.animated { width: var(--score-width); }
+
+.score-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* ====== NEWS CARDS ====== */
+.news-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 10px;
+}
+
+.news-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.news-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.news-date {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.news-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+.tag-acelerador { background: rgba(16,185,129,0.15); color: #34d399; }
+.tag-stopper { background: rgba(248,113,113,0.15); color: #f87171; }
+
+/* ====== MESSAGE PREVIEW ====== */
+.message-preview {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 16px;
+  position: relative;
+}
+
+.message-preview::before {
+  content: 'MENSAJE OUTREACH GENERADO';
+  position: absolute;
+  top: -10px; left: 20px;
+  background: var(--redegal-dark);
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--redegal-accent);
+}
+
+.message-to { font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
+.message-subject { font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 14px; }
+.message-body { font-size: 14px; color: var(--text); line-height: 1.7; }
+.message-highlight { color: var(--redegal-light); font-weight: 500; }
+
+/* ====== ROI TABLE ====== */
+.roi-table {
+  width: 100%;
+  max-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+}
+
+.roi-table th {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.roi-table td {
+  font-size: 15px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--text);
+}
+
+.roi-table .highlight-cell {
+  color: var(--redegal-light);
+  font-weight: 700;
+  font-size: 17px;
+}
+
+/* ====== TIMELINE ====== */
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 24px;
+}
+
+.timeline-day {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  padding: 14px 4px;
+}
+
+.timeline-day::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--glass-border);
+  z-index: 0;
+}
+
+.timeline-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--redegal-dark);
+  border: 2px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin: 0 auto 8px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.5s ease;
+}
+
+.timeline-day.active .timeline-dot {
+  border-color: var(--redegal-accent);
+  background: var(--redegal-accent);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(59,130,246,0.4);
+}
+
+.timeline-day.done .timeline-dot {
+  border-color: #34d399;
+  background: #34d399;
+  color: #fff;
+}
+
+.timeline-text {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+/* ====== CONTROLS ====== */
+.controls {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  background: rgba(15,23,41,0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  padding: 10px 24px;
+}
+
+.ctrl-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ctrl-btn:hover { color: var(--text-bright); background: rgba(255,255,255,0.08); }
+.ctrl-btn.active { color: var(--redegal-accent); }
+
+.slide-counter {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ====== NARRATION INDICATOR ====== */
+.narration-indicator {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15,23,41,0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.narration-indicator:hover { border-color: var(--redegal-accent); }
+
+.audio-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+
+.audio-wave span {
+  display: block;
+  width: 3px;
+  background: var(--redegal-accent);
+  border-radius: 2px;
+  animation: wave 1s ease-in-out infinite;
+}
+
+.audio-wave span:nth-child(1) { height: 6px; animation-delay: 0s; }
+.audio-wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+.audio-wave span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+.audio-wave span:nth-child(4) { height: 14px; animation-delay: 0.45s; }
+.audio-wave span:nth-child(5) { height: 6px; animation-delay: 0.6s; }
+
+.audio-wave.paused span { animation: none; height: 3px; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
+
+/* ====== BRAND LOGO ====== */
+.brand-top {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  z-index: 100;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-bright);
+  letter-spacing: 2px;
+}
+
+.brand-top span { color: var(--redegal-accent); }
+
+/* ====== CONFIDENTIAL ====== */
+.confidential {
+  position: fixed;
+  bottom: 10px;
+  right: 24px;
+  z-index: 100;
+  font-size: 10px;
+  color: rgba(148,163,184,0.4);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ====== SPECIAL SLIDE STYLES ====== */
+.big-number {
+  font-size: 72px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--redegal-accent), var(--boostic));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.comparison-box {
+  text-align: center;
+  padding: 30px;
+}
+
+.comparison-box .comp-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.comparison-box .comp-value {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--text-bright);
+}
+
+.comparison-box .comp-detail {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.versus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dim);
+  padding: 0 20px;
+}
+
+/* ====== FADE CHILDREN ANIMATION ====== */
+.fade-child {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.6s ease;
+}
+
+.fade-child.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== KEYFRAMES ====== */
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.2); }
+  50% { box-shadow: 0 0 40px rgba(59,130,246,0.4); }
+}
+
+.glow { animation: pulse-glow 2s infinite; }
+
+/* ====== SUBTITLE BANNER ====== */
+.narration-text-bar {
+  display: none;
+}
+
+.narration-text-bar.visible { display: none; }
+
+/* ====== CHAT BOT ====== */
+.chat-bot {
+  background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.95));
+  border: 1.5px solid rgba(59,130,246,0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08));
+  border-bottom: 1px solid rgba(59,130,246,0.2);
+}
+
+.chat-bot-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(59,130,246,0.3);
+}
+
+.chat-bot-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 0.3px;
+}
+
+.chat-bot-status {
+  font-size: 11px;
+  color: #34d399;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.chat-bot-status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+  box-shadow: 0 0 6px #34d399;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.chat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  flex-wrap: wrap;
+}
+
+.chat-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.03);
+}
+
+.chat-channel:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
+.chat-channel.active { border-color: rgba(59,130,246,0.5); background: rgba(59,130,246,0.12); }
+
+.chat-channel svg { width: 12px; height: 12px; }
+
+.ai-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-left: auto;
+  background: rgba(0,0,0,0.2);
+}
+
+.ai-option {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  letter-spacing: 0.3px;
+}
+
+.ai-option:last-child { border-right: none; }
+.ai-option.active-claude { background: rgba(204,120,50,0.2); color: #f0a060; text-shadow: 0 0 8px rgba(204,120,50,0.3); }
+.ai-option.active-gpt { background: rgba(16,163,127,0.2); color: #20c997; text-shadow: 0 0 8px rgba(16,163,127,0.3); }
+.ai-option.active-both { background: rgba(139,92,246,0.2); color: #b794f6; }
+
+.kb-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, rgba(139,92,246,0.06), rgba(59,130,246,0.04));
+  border-top: 1px solid rgba(139,92,246,0.15);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.kb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(139,92,246,0.15);
+  color: #b794f6;
+  letter-spacing: 0.3px;
+}
+
+.kb-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kb-action:hover { border-color: var(--redegal-accent); color: var(--redegal-light); }
+
+.chat-messages {
+  padding: 14px 18px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.chat-msg {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.chat-msg.user {
+  flex-direction: row-reverse;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 88%;
+}
+
+.chat-msg.user .chat-bubble {
+  background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(99,102,241,0.15));
+  border: 1px solid rgba(59,130,246,0.3);
+  color: var(--text-bright);
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+.chat-msg.bot .chat-bubble {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.02);
+}
+
+.chat-input-field {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: inherit;
+}
+
+.chat-send-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--redegal-accent);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .slide { padding: 40px; }
+  .slide-title { font-size: 36px; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .pipeline { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background Particles -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Brand -->
+<div class="brand-top">REDE<span>GAL</span></div>
+
+<!-- Narration Indicator -->
+<div class="narration-indicator" id="narrationToggle" onclick="toggleNarration()">
+  <div class="audio-wave" id="audioWave">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <span id="narrationLabel">Audio ON</span>
+</div>
+
+<!-- Subtitles -->
+<div class="narration-text-bar" id="subtitles"></div>
+
+<!-- Confidential -->
+<div class="confidential">Confidencial &middot; Febrero 2026</div>
+
+<!-- ==================== SLIDES ==================== -->
+<div class="slides-container">
+
+  <!-- SLIDE 0: TITLE -->
+  <div class="slide active" id="slide-0">
+    <div class="slide-tag">Sistema Inteligente</div>
+    <h1 class="slide-title" style="font-size:48px;">Prospección Comercial<br><span class="accent">Automatizada</span></h1>
+    <p class="slide-subtitle" style="margin-top:24px;">
+      Un sistema que combina IA, análisis técnico profundo e inteligencia de noticias<br>
+      para las 4 líneas de negocio de Redegal
+    </p>
+    <div style="display:flex; gap:24px; margin-top:40px;">
+      <span style="color:var(--boostic); font-weight:700; font-size:14px;">Boostic</span>
+      <span style="color:var(--text-dim);">&middot;</span>
+      <span style="color:var(--binnacle); font-weight:700; font-size:14px;">Binnacle</span>
+      <span style="color:var(--text-dim);">&middot;</span>
+      <span style="color:var(--tech); font-weight:700; font-size:14px;">Digital Tech</span>
+      <span style="color:var(--text-dim);">&middot;</span>
+      <span style="color:var(--digital); font-weight:700; font-size:14px;">Digital Agency</span>
+    </div>
+    <p style="font-size:13px; color:var(--text-dim); margin-top:40px;">Pulsa <span style="color:var(--text-bright);">ESPACIO</span> o usa los controles para avanzar</p>
+  </div>
+
+  <!-- SLIDE 1: THE PROBLEM -->
+  <div class="slide" id="slide-1">
+    <div class="slide-tag">El Reto</div>
+    <h1 class="slide-title" style="font-size:42px;">La prospección manual<br><span class="accent">no escala</span></h1>
+    <div class="grid-3" style="margin-top:36px;">
+      <div class="glass-card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:900; color:#f87171;">72%</div>
+        <p style="font-size:14px; color:var(--text-dim); margin-top:8px;">del tiempo comercial se pierde<br>en leads no cualificados</p>
+      </div>
+      <div class="glass-card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:900; color:#fbbf24;">4</div>
+        <p style="font-size:14px; color:var(--text-dim); margin-top:8px;">líneas de negocio con<br>necesidades diferentes</p>
+      </div>
+      <div class="glass-card" style="text-align:center;">
+        <div style="font-size:48px; font-weight:900; color:#34d399;">0</div>
+        <p style="font-size:14px; color:var(--text-dim); margin-top:8px;">visibilidad sobre timing<br>y señales del mercado</p>
+      </div>
+    </div>
+    <p class="slide-subtitle" style="margin-top:30px;">
+      Necesitamos un sistema que entienda cada línea, analice técnicamente cada prospect<br>
+      y detecte el momento perfecto para contactar.
+    </p>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(248,113,113,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Prospección</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Cuánto tiempo pierde el equipo comercial en leads fríos y cuál es el coste de oportunidad actual?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> Análisis último trimestre: <strong>72% del tiempo comercial</strong> en leads no cualificados = <strong>~840h perdidas</strong>. Coste oportunidad: <strong>~420K€</strong> en pipeline no generado. Con scoring automático, estimamos recuperar el 60% de ese tiempo productivo.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: THE SOLUTION - 4 PILLARS -->
+  <div class="slide" id="slide-2">
+    <div class="slide-tag">La Solución</div>
+    <h1 class="slide-title" style="font-size:40px;">Cuatro pilares que trabajan <span class="accent">juntos</span></h1>
+    <div class="grid-4" style="margin-top:32px;">
+      <div class="pillar-card" style="--card-accent: #3b82f6;">
+        <div class="pillar-icon">🔍</div>
+        <div class="pillar-name">Enginy</div>
+        <div class="pillar-desc">Plataforma AI-native B2B: búsqueda, enriquecimiento de contactos y outreach multicanal</div>
+      </div>
+      <div class="pillar-card" style="--card-accent: #8b5cf6;">
+        <div class="pillar-icon">🧠</div>
+        <div class="pillar-name">Capa Redegal</div>
+        <div class="pillar-desc">Scrapers propios + Claude API: tech stack, ecommerce, SEO, BI y scoring multi-línea</div>
+      </div>
+      <div class="pillar-card" style="--card-accent: #f59e0b;">
+        <div class="pillar-icon">📰</div>
+        <div class="pillar-name">Intel. Noticias</div>
+        <div class="pillar-desc">Google News, prensa sectorial y BORME: aceleradores y stoppers en tiempo real</div>
+      </div>
+      <div class="pillar-card" style="--card-accent: #10b981;">
+        <div class="pillar-icon">📊</div>
+        <div class="pillar-name">HubSpot + Binnacle</div>
+        <div class="pillar-desc">CRM centralizado + dashboard de pipeline con feed de noticias por prospect</div>
+      </div>
+    </div>
+    <p class="slide-subtitle" style="margin-top:30px; font-size:16px; font-style:italic;">
+      "Enginy ejecuta. La inteligencia Redegal diferencia. Las noticias dan timing. HubSpot centraliza. Binnacle visibiliza."
+    </p>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(139,92,246,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Sistema</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option active-gpt" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Cómo interactúan los 4 pilares cuando se detecta un prospect nuevo y cuánto tarda el ciclo completo?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#20c997; font-weight:700;">GPT ·</span> Ciclo completo: <strong>~4 minutos</strong>. Enginy identifica y enriquece (2min) → Capa Redegal analiza tech stack con scrapers + Claude (1min) → News Intelligence cruza noticias en paralelo (30s) → Claude genera score multi-línea + mensaje personalizado (30s) → HubSpot + Binnacle actualizan pipeline. Todo automático, <strong>24/7</strong>.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PIPELINE / ARCHITECTURE -->
+  <div class="slide" id="slide-3">
+    <div class="slide-tag">Arquitectura</div>
+    <h1 class="slide-title" style="font-size:38px;">Pipeline de 6 fases <span class="accent">integradas</span></h1>
+    <div class="pipeline" id="pipeline">
+      <div class="pipeline-step" style="--step-color: #3b82f6;" data-delay="0">
+        <div class="pipeline-num">FASE 1</div>
+        <div class="pipeline-label">Identificación</div>
+        <div class="pipeline-who">Enginy</div>
+      </div>
+      <div class="pipeline-arrow" data-delay="200">→</div>
+      <div class="pipeline-step" style="--step-color: #3b82f6;" data-delay="400">
+        <div class="pipeline-num">FASE 2</div>
+        <div class="pipeline-label">Enriquecimiento</div>
+        <div class="pipeline-who">Enginy +30 fuentes</div>
+      </div>
+      <div class="pipeline-arrow" data-delay="600">→</div>
+      <div class="pipeline-step" style="--step-color: #8b5cf6;" data-delay="800">
+        <div class="pipeline-num">FASE 3</div>
+        <div class="pipeline-label">Análisis Técnico</div>
+        <div class="pipeline-who">Capa Redegal</div>
+      </div>
+      <div class="pipeline-arrow" data-delay="1000">→</div>
+      <div class="pipeline-step" style="--step-color: #f59e0b;" data-delay="1200">
+        <div class="pipeline-num">FASE 4</div>
+        <div class="pipeline-label">Noticias</div>
+        <div class="pipeline-who">News + BORME</div>
+      </div>
+      <div class="pipeline-arrow" data-delay="1400">→</div>
+      <div class="pipeline-step" style="--step-color: #10b981;" data-delay="1600">
+        <div class="pipeline-num">FASE 5</div>
+        <div class="pipeline-label">Scoring IA</div>
+        <div class="pipeline-who">Claude API</div>
+      </div>
+      <div class="pipeline-arrow" data-delay="1800">→</div>
+      <div class="pipeline-step" style="--step-color: #06b6d4;" data-delay="2000">
+        <div class="pipeline-num">FASE 6</div>
+        <div class="pipeline-label">Activación</div>
+        <div class="pipeline-who">Enginy + HubSpot</div>
+      </div>
+    </div>
+    <p class="slide-subtitle" style="margin-top:30px; font-size:15px;">
+      Cada prospect pasa por las 6 fases automáticamente.<br>
+      El sistema genera un score por cada línea de negocio + mensaje personalizado.
+    </p>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(59,130,246,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Pipeline</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Si Enginy detecta 500 empresas ICP en un sector, ¿cuántas llegarían a scoring alto y con qué precisión histórica?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> Embudo típico: 500 ICP → <strong>290 con datos enriquecidos</strong> (+30 fuentes) → 180 con análisis técnico completo → <strong>45-60 con score >70</strong> (calientes). Precisión del scoring: <strong>82% en los últimos 3 meses</strong>. Tasa de falsos positivos: 8%. El sistema mejora con cada feedback del equipo comercial.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: EXAMPLE BOOSTIC → CASA DEL LIBRO -->
+  <div class="slide" id="slide-4">
+    <div class="example-header">
+      <span class="example-badge" style="background:rgba(102,54,206,0.2); color:var(--boostic);">Boostic</span>
+      <span class="example-client">Casa del Libro</span>
+      <span class="example-sector">Librería &amp; eCommerce · Retail España</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--boostic);">🛒 Análisis Ecommerce</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value">Salesforce Commerce Cloud</span></div>
+        <div class="data-row"><span class="data-label">Catálogo</span><span class="data-value warning">+500.000 referencias (libros + eBooks)</span></div>
+        <div class="data-row"><span class="data-label">Google Merchant</span><span class="data-value warning">Feed sin optimización de títulos</span></div>
+        <div class="data-row"><span class="data-label">Shopping Ads</span><span class="data-value warning">Cobertura parcial del catálogo</span></div>
+        <div class="data-row"><span class="data-label">Búsqueda interna</span><span class="data-value good">Algolia (avanzada)</span></div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--boostic);">⚡ Tech Stack (datos reales)</div>
+        <div class="data-row"><span class="data-label">Ecommerce</span><span class="data-value">Salesforce Commerce Cloud</span></div>
+        <div class="data-row"><span class="data-label">Frontend</span><span class="data-value good">React</span></div>
+        <div class="data-row"><span class="data-label">CDN</span><span class="data-value good">Akamai</span></div>
+        <div class="data-row"><span class="data-label">Analytics</span><span class="data-value good">GA4 + GTM</span></div>
+        <div class="data-row"><span class="data-label">Advertising</span><span class="data-value">Criteo + New Relic</span></div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:#f59e0b;">📰 Señales de Noticias</div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"Casa del Libro renueva su plataforma digital para competir con Amazon en el mercado español"</div>
+            <div class="news-date">El Economista · Enero 2026</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Transformación digital</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"El sector librero español crece un 4,2% en 2025 impulsado por el canal online"</div>
+            <div class="news-date">Expansión · Diciembre 2025</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Crecimiento sector</span>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--boostic);">🎯 Oportunidad Boostic</div>
+        <div style="padding:10px 0;">
+          <p style="font-size:14px; line-height:1.7; color:var(--text);">
+            <strong style="color:var(--boostic);">+500K referencias sin optimización de feed</strong> — con Boostic, Casa del Libro puede optimizar títulos, categorías y atributos de su catálogo en Google Shopping, mejorando visibilidad frente a Amazon y aumentando ROAS.
+          </p>
+          <p style="font-size:14px; line-height:1.7; color:var(--text); margin-top:10px;">
+            <strong>Ticket estimado:</strong> <span style="color:var(--boostic-light);">20.000 - 35.000€/año</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(102,54,206,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Boostic</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Compara el feed de Google Shopping de Casa del Libro con Amazon y FNAC. ¿Dónde tiene más margen?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#b794f6; font-weight:700;">CLAUDE+GPT ·</span> <strong>vs Amazon:</strong> Casa del Libro tiene catálogo curado pero títulos genéricos en feed (pierde ~12.000 búsquedas/mes long-tail). <strong>vs FNAC:</strong> Mejor DA (62 vs 65) pero menor cobertura Shopping. <strong>Quick win:</strong> optimizar títulos top 20.000 refs con autor+género+formato = +40% impresiones estimado en libros bestseller.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SCORING BOOSTIC - CASA DEL LIBRO -->
+  <div class="slide" id="slide-5">
+    <div class="example-header">
+      <span class="example-badge" style="background:rgba(102,54,206,0.2); color:var(--boostic);">Boostic</span>
+      <span class="example-client">Casa del Libro — Scoring IA</span>
+    </div>
+    <div class="score-section">
+      <div class="score-row" data-delay="200">
+        <span class="score-line-name" style="color:var(--boostic);">Boostic</span>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="--score-width:78%; background:linear-gradient(90deg, var(--boostic), var(--boostic-light));">78</div>
+        </div>
+        <span class="score-tag" style="background:rgba(102,54,206,0.2); color:var(--boostic-light);">CALIENTE</span>
+      </div>
+      <div class="score-row" data-delay="400">
+        <span class="score-line-name" style="color:var(--binnacle);">Binnacle</span>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="--score-width:71%; background:linear-gradient(90deg, var(--binnacle), var(--binnacle-light));">71</div>
+        </div>
+        <span class="score-tag" style="background:rgba(6,182,212,0.2); color:var(--binnacle-light);">CALIENTE</span>
+      </div>
+      <div class="score-row" data-delay="600">
+        <span class="score-line-name" style="color:var(--tech);">Digital Tech</span>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="--score-width:62%; background:linear-gradient(90deg, var(--tech), var(--tech-light));">62</div>
+        </div>
+        <span class="score-tag" style="background:rgba(249,115,22,0.15); color:var(--tech-light);">TIBIO</span>
+      </div>
+      <div class="score-row" data-delay="800">
+        <span class="score-line-name" style="color:var(--digital);">Digital Agency</span>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" style="--score-width:55%; background:linear-gradient(90deg, var(--digital), var(--digital-light));">55</div>
+        </div>
+        <span class="score-tag" style="background:rgba(16,185,129,0.15); color:var(--digital-light);">TIBIO</span>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:16px; width:100%; max-width:1100px; margin-top:20px;">
+      <!-- Mensaje outreach -->
+      <div class="message-preview" style="margin-top:0;">
+        <div class="message-to">Para: Director Digital · Casa del Libro</div>
+        <div class="message-subject">Optimización de catálogo: +500K referencias en Google Shopping</div>
+        <div class="message-body">
+          Hola [Nombre],<br><br>
+          He visto que Casa del Libro está <span class="message-highlight">renovando su plataforma digital</span> para competir en el canal online. Con un catálogo de <span class="message-highlight">+500.000 referencias</span>, la optimización del feed de Shopping es clave.<br><br>
+          Vuestros títulos en Google Merchant <span class="message-highlight">no incluyen autor, género ni formato</span> — datos que los lectores buscan. En retailers similares, Boostic ha mejorado el ROAS un 40% en 3 meses.<br><br>
+          ¿Una call de 20 min la próxima semana?
+        </div>
+      </div>
+      <!-- Bot de Leads -->
+      <div class="chat-bot">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(102,54,206,0.2);">🤖</div>
+          <div>
+            <div class="chat-bot-name">Asistente de Leads</div>
+          </div>
+          <div class="chat-bot-status">Online</div>
+        </div>
+        <!-- Toolbar: canales + selector IA -->
+        <div class="chat-toolbar">
+          <div class="chat-channel active" title="Web app">
+            <span>🌐</span> <span>Web</span>
+          </div>
+          <div class="chat-channel" title="Telegram bot" style="border-color:rgba(38,165,219,0.3);">
+            <span>✈️</span> <span style="color:#29b6f6;">Telegram</span>
+          </div>
+          <div class="ai-selector">
+            <div class="ai-option active-claude">Claude</div>
+            <div class="ai-option">GPT</div>
+            <div class="ai-option active-both">Ambos</div>
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-msg user">
+            <div class="chat-bubble">¿Por qué Casa del Libro tiene score 78 en Boostic?</div>
+          </div>
+          <div class="chat-msg bot">
+            <div class="chat-bubble"><span style="font-size:10px; color:#e8945a; font-weight:600;">CLAUDE ·</span> Casa del Libro puntúa 78: <strong>+500K refs</strong> feed sin optimizar (25pts), Salesforce Commerce Cloud compatible (20pts), renovación digital en curso (18pts), acelerador sector +4,2% (8pts), contacto verificado (7pts).</div>
+          </div>
+          <div class="chat-msg user">
+            <div class="chat-bubble">¿Qué competidores ya optimizan feed?</div>
+          </div>
+          <div class="chat-msg bot">
+            <div class="chat-bubble"><span style="font-size:10px; color:#e8945a; font-weight:600;">CLAUDE ·</span> Amazon: optimización máxima (referencia). FNAC: feed avanzado con 220K refs. <strong>Casa del Libro es el mayor catálogo español sin optimización de feed en Shopping.</strong></div>
+          </div>
+        </div>
+        <!-- Knowledge Base bar -->
+        <div class="kb-bar">
+          <span class="kb-badge">📚 KB</span>
+          <span>1.247 insights guardados</span>
+          <span class="kb-action" style="margin-left:auto;">📄 PDF</span>
+          <span class="kb-action">📋 Docs</span>
+        </div>
+        <div class="chat-input">
+          <input class="chat-input-field" placeholder="Pregunta sobre este lead..." disabled>
+          <button class="chat-send-btn">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: EXAMPLE BINNACLE → MANGO -->
+  <div class="slide" id="slide-6">
+    <div class="example-header">
+      <span class="example-badge" style="background:rgba(6,182,212,0.2); color:var(--binnacle);">Binnacle</span>
+      <span class="example-client">Mango</span>
+      <span class="example-sector">Moda &amp; Retail · eCommerce Internacional</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--binnacle);">📊 Análisis BI / Analytics</div>
+        <div class="data-row"><span class="data-label">Analytics</span><span class="data-value good">Adobe Analytics</span></div>
+        <div class="data-row"><span class="data-label">GTM</span><span class="data-value good">Configurado</span></div>
+        <div class="data-row"><span class="data-label">BI actual</span><span class="data-value warning">Tableau (departamental, no unificado)</span></div>
+        <div class="data-row"><span class="data-label">Canales sin integrar</span><span class="data-value bad">Tiendas + eComm + App + RRSS</span></div>
+        <div class="data-row"><span class="data-label">Atribución omnicanal</span><span class="data-value bad">No implementada</span></div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--binnacle);">⚡ Presencia Digital</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value good">Custom eCommerce + React</span></div>
+        <div class="data-row"><span class="data-label">CDN</span><span class="data-value good">Akamai</span></div>
+        <div class="data-row"><span class="data-label">Marketing</span><span class="data-value good">Salesforce Marketing Cloud</span></div>
+        <div class="data-row"><span class="data-label">Mercados</span><span class="data-value good">+100 países · 2.700 tiendas</span></div>
+        <div class="data-row"><span class="data-label">Facturación</span><span class="data-value good">+2.700M€ (2025)</span></div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:#f59e0b;">📰 Señales de Noticias</div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"Mango supera los 3.000M€ de facturación y acelera su plan de transformación digital omnicanal"</div>
+            <div class="news-date">Modaes · Enero 2026</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Crecimiento + Omnicanalidad</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"Mango abre 100 tiendas en 2025 y apuesta por integrar datos online-offline"</div>
+            <div class="news-date">Fashion Network · Diciembre 2025</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Datos omnicanal</span>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--binnacle);">🎯 Oportunidad Binnacle</div>
+        <div style="padding:10px 0;">
+          <p style="font-size:14px; line-height:1.7; color:var(--text);">
+            <strong style="color:var(--binnacle);">2.700 tiendas + eComm + App sin dashboard unificado</strong> — Binnacle puede consolidar Adobe Analytics, Salesforce, datos de tienda y app en un dashboard ejecutivo omnicanal con atribución cross-channel en tiempo real.
+          </p>
+          <p style="font-size:14px; line-height:1.7; color:var(--text); margin-top:10px;">
+            <strong>Ticket estimado:</strong> <span style="color:var(--binnacle-light);">60.000 - 120.000€/año</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini Bot Mango -->
+    <div style="width:100%; max-width:1100px; margin-top:12px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(6,182,212,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Binnacle</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Cuántas fuentes de datos tiene Mango sin consolidar?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>+10 fuentes detectadas</strong>: Adobe Analytics, Salesforce MC, App móvil, POS tiendas, eComm, RRSS, campañas Google/Meta, CRM... Con 2.700 tiendas y +100 países, Binnacle unificaría todo en un dashboard omnicanal. Ticket: 60-120K€/año.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SLIDE 7: DE ONLINE DROGIST — BOOSTIC + DIGITAL BUSINESS -->
+  <div class="slide" id="slide-7">
+    <div class="example-header">
+      <span class="example-badge" style="background:linear-gradient(90deg, rgba(102,54,206,0.2), rgba(16,185,129,0.2)); color:var(--redegal-light);">Boostic + Digital</span>
+      <span class="example-client">De Online Drogist</span>
+      <span class="example-sector">Farmacia Online · eCommerce · Países Bajos</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--boostic);">🛒 Oportunidad Boostic — Score 82</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value">Magento 2</span></div>
+        <div class="data-row"><span class="data-label">Catálogo</span><span class="data-value warning">+15.000 productos pharma + beauty</span></div>
+        <div class="data-row"><span class="data-label">Google Shopping NL</span><span class="data-value warning">Feed sin optimización avanzada</span></div>
+        <div class="data-row"><span class="data-label">Trustpilot</span><span class="data-value good">4.5/5 · +8.000 reviews</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value bad">Feed multi-país para expansión</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--boostic);">Ticket: 15K - 25K€/año</div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--digital);">📈 Oportunidad Digital Agency — Score 74</div>
+        <div class="data-row"><span class="data-label">DA actual</span><span class="data-value warning">48 (mejorable)</span></div>
+        <div class="data-row"><span class="data-label">Keywords NL</span><span class="data-value good">42.000 orgánicas</span></div>
+        <div class="data-row"><span class="data-label">SEO internacional</span><span class="data-value bad">No posicionado fuera de NL</span></div>
+        <div class="data-row"><span class="data-label">Contenido</span><span class="data-value warning">Solo en holandés</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value bad">SEO multi-idioma para expansión EU</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--digital);">Ticket: 5K - 10K€/mes</div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:#f59e0b;">📰 Señales de Noticias</div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"De Online Drogist groeit 35% en zoekt internationale uitbreiding naar België en Duitsland"</div>
+            <div class="news-date">Twinkle Magazine · Enero 2026</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Expansión internacional</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"El mercado de droguerías online en Países Bajos alcanza los 2.000M€"</div>
+            <div class="news-date">RetailTrends · Diciembre 2025</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Crecimiento mercado</span>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--redegal-light);">🎯 Estrategia Cross-sell Boostic + Digital</div>
+        <div style="padding:10px 0;">
+          <p style="font-size:14px; line-height:1.7; color:var(--text);">
+            <strong style="color:var(--boostic);">Entrada por Boostic:</strong> Optimización del feed de +15K productos para Google Shopping NL, con extensión a BE y DE para la expansión. Una vez dentro, escalar a <strong style="color:var(--digital);">Digital Agency</strong> con SEO multi-idioma (holandés, alemán, francés) para captar tráfico en nuevos mercados.
+          </p>
+          <p style="font-size:14px; line-height:1.7; color:var(--text); margin-top:10px;">
+            <strong>Ticket combinado:</strong> <span style="color:var(--redegal-light); font-weight:700;">75K - 145K€/año</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Mini Bot De Online Drogist -->
+    <div style="width:100%; max-width:1100px; margin-top:12px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:linear-gradient(135deg, rgba(102,54,206,0.3), rgba(16,185,129,0.3)); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Cross-sell</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Cómo atacar De Online Drogist con dos líneas?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> Entrada por <strong>Boostic</strong> (score 82): feed +15K productos para Shopping NL/BE/DE. Una vez dentro, escalar a <strong>Digital Agency</strong> (score 74): SEO multi-idioma para expansión europea. Timing perfecto: crecimiento 35% y buscando internacionalización. Ticket combinado: 75-145K€/año.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: EXAMPLE TECH → GANDHI -->
+  <div class="slide" id="slide-8">
+    <div class="example-header">
+      <span class="example-badge" style="background:rgba(249,115,22,0.2); color:var(--tech);">Digital Tech</span>
+      <span class="example-client">Librerías Gandhi</span>
+      <span class="example-sector">Librería &amp; eCommerce · México</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--tech);">⚡ Análisis Tech Stack (datos reales)</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value warning">VTEX (legacy config)</span></div>
+        <div class="data-row"><span class="data-label">Frontend</span><span class="data-value bad">jQuery (sin framework moderno)</span></div>
+        <div class="data-row"><span class="data-label">Analytics</span><span class="data-value bad">GA Universal (no migrado a GA4)</span></div>
+        <div class="data-row"><span class="data-label">CDN</span><span class="data-value good">Cloudflare</span></div>
+        <div class="data-row"><span class="data-label">App Móvil</span><span class="data-value warning">Web responsive (sin PWA)</span></div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--tech);">🌐 Rendimiento y Métricas</div>
+        <div class="data-row"><span class="data-label">PageSpeed</span><span class="data-value bad">38/100 (muy bajo)</span></div>
+        <div class="data-row"><span class="data-label">LCP</span><span class="data-value bad">6.5 segundos</span></div>
+        <div class="data-row"><span class="data-label">CLS</span><span class="data-value bad">0.22 (inestable)</span></div>
+        <div class="data-row"><span class="data-label">Advertising</span><span class="data-value">Facebook Pixel</span></div>
+        <div class="data-row"><span class="data-label">Empleados</span><span class="data-value good">+2.500 · Revenue €120M</span></div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:#f59e0b;">📰 Señales de Noticias</div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"Gandhi invertirá 500 MDP en transformación digital durante 2026 para modernizar su plataforma ecommerce"</div>
+            <div class="news-date">Forbes México · Enero 2026</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Inversión tech</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"El ecommerce mexicano crece un 28% interanual y las librerías lideran la categoría cultural"</div>
+            <div class="news-date">El Financiero · Diciembre 2025</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Crecimiento sector</span>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--tech);">🎯 Oportunidad Digital Tech</div>
+        <div style="padding:10px 0;">
+          <p style="font-size:14px; line-height:1.7; color:var(--text);">
+            <strong style="color:var(--tech);">PageSpeed 38/100, jQuery y GA Universal</strong> — Gandhi necesita migrar a arquitectura headless (VTEX IO o custom React), implementar GA4 y mejorar Core Web Vitals. Con 500 MDP de inversión aprobada, el timing es perfecto.
+          </p>
+          <p style="font-size:14px; line-height:1.7; color:var(--text); margin-top:10px;">
+            <strong>Ticket estimado:</strong> <span style="color:var(--tech-light);">100.000 - 200.000€</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini Bot Gandhi -->
+    <div style="width:100%; max-width:1100px; margin-top:12px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(249,115,22,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Tech</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option active-gpt" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Qué impacto tendría migrar Gandhi de VTEX legacy a headless?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#20c997; font-weight:700;">GPT ·</span> PageSpeed de <strong>38 → 85+</strong>, +30% conversión mobile, migración GA Universal→GA4 incluida. Con jQuery eliminado y VTEX IO headless, el LCP baja de <strong>6.5s → 2.0s</strong>. Con los 500 MDP aprobados, el proyecto encaja en su roadmap 2026.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: EXAMPLE DIGITAL → PADEL NUESTRO -->
+  <div class="slide" id="slide-9">
+    <div class="example-header">
+      <span class="example-badge" style="background:rgba(16,185,129,0.2); color:var(--digital);">Digital Agency</span>
+      <span class="example-client">Padel Nuestro</span>
+      <span class="example-sector">Deportes &amp; eCommerce · Expansión Internacional</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--digital);">📈 Análisis SEO / SEM</div>
+        <div class="data-row"><span class="data-label">Domain Authority</span><span class="data-value warning">DA 52 (crecimiento rápido)</span></div>
+        <div class="data-row"><span class="data-label">Keywords orgánicas</span><span class="data-value good">+68.000</span></div>
+        <div class="data-row"><span class="data-label">Tráfico orgánico</span><span class="data-value good">650.000 visitas/mes (+35% YoY)</span></div>
+        <div class="data-row"><span class="data-label">SEO internacional</span><span class="data-value bad">Solo posicionado en ES</span></div>
+        <div class="data-row"><span class="data-label">Gaps SEO NL/DE/FR</span><span class="data-value bad">0 keywords — mercados vírgenes</span></div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--digital);">⚡ Presencia Digital</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value">PrestaShop + PHP</span></div>
+        <div class="data-row"><span class="data-label">Email marketing</span><span class="data-value good">Klaviyo (avanzado)</span></div>
+        <div class="data-row"><span class="data-label">Advertising</span><span class="data-value good">Google Ads + Meta Pixel</span></div>
+        <div class="data-row"><span class="data-label">Mercados actuales</span><span class="data-value">ES (dominante en padel)</span></div>
+        <div class="data-row"><span class="data-label">Expansión 2026</span><span class="data-value warning">NL, DE, FR — sin SEO local</span></div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:#f59e0b;">📰 Señales de Noticias</div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"Padel Nuestro cierra 2025 con un crecimiento del 40% y anuncia expansión a Países Bajos y Alemania"</div>
+            <div class="news-date">Palco23 · Enero 2026</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Expansión internacional</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon">🟢</span>
+          <div>
+            <div class="news-text">"El padel genera ya más de 4.000M€ en la economía española y se expande por Europa"</div>
+            <div class="news-date">Cinco Días · Diciembre 2025</div>
+            <span class="news-tag tag-acelerador">ACELERADOR · Crecimiento mercado</span>
+          </div>
+        </div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--digital);">🎯 Oportunidad Digital Agency</div>
+        <div style="padding:10px 0;">
+          <p style="font-size:14px; line-height:1.7; color:var(--text);">
+            <strong style="color:var(--digital);">0 keywords en NL/DE/FR y expansión confirmada</strong> — Padel Nuestro necesita una estrategia SEO internacional urgente: contenido multi-idioma, link building local y campañas performance en mercados europeos donde el padel explota.
+          </p>
+          <p style="font-size:14px; line-height:1.7; color:var(--text); margin-top:10px;">
+            <strong>Ticket estimado:</strong> <span style="color:var(--digital-light);">8.000 - 15.000€/mes</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini Bot Padel Nuestro -->
+    <div style="width:100%; max-width:1100px; margin-top:12px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(16,185,129,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Agency</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option active-gpt" style="font-size:11px; padding:4px 8px;">GPT</div>
+            <div class="ai-option" style="font-size:9px; padding:2px 6px; background:rgba(139,92,246,0.15); color:#a78bfa;">Ambos</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Qué potencial tiene Padel Nuestro en SEO internacional?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>Potencial enorme:</strong> padel crece +300% en NL y DE. Padel Nuestro tiene DA 52 y domina ES pero <strong>0 keywords en mercados objetivo</strong>. Con su almacén en NL operativo, solo falta el SEO local. Quick win: landing pages NL/DE en 4 semanas = primeros rankings en 2 meses.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: PADEL NUESTRO — CROSS-SELL 3 LÍNEAS -->
+  <div class="slide" id="slide-10">
+    <div class="example-header">
+      <span class="example-badge" style="background:linear-gradient(90deg, rgba(102,54,206,0.2), rgba(16,185,129,0.2)); color:var(--redegal-light);">Cross-sell 3 Líneas</span>
+      <span class="example-client">Padel Nuestro</span>
+      <span class="example-sector">Deportes · eCommerce · Expansión EU · España</span>
+    </div>
+    <div class="analysis-grid">
+      <div class="analysis-card" data-delay="200">
+        <div class="analysis-card-title" style="color:var(--boostic);">🛒 Boostic — Score 85</div>
+        <div class="data-row"><span class="data-label">Plataforma</span><span class="data-value">PrestaShop + PHP</span></div>
+        <div class="data-row"><span class="data-label">Catálogo</span><span class="data-value warning">Palas + ropa + calzado + accesorios</span></div>
+        <div class="data-row"><span class="data-label">Google Shopping</span><span class="data-value warning">Feed solo ES, sin multi-país</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value bad">Feed multi-país EU + optimización</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--boostic);">Ticket: 18K - 30K€/año</div>
+      </div>
+      <div class="analysis-card" data-delay="400">
+        <div class="analysis-card-title" style="color:var(--digital);">📈 Digital Agency — Score 76</div>
+        <div class="data-row"><span class="data-label">DA actual</span><span class="data-value warning">52 (en crecimiento)</span></div>
+        <div class="data-row"><span class="data-label">Keywords ES</span><span class="data-value good">68.000 (domina padel ES)</span></div>
+        <div class="data-row"><span class="data-label">Keywords EU</span><span class="data-value bad">0 en NL, DE, FR</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value bad">SEO multi-idioma para expansión</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--digital);">Ticket: 8K - 15K€/mes</div>
+      </div>
+      <div class="analysis-card" data-delay="600">
+        <div class="analysis-card-title" style="color:var(--tech);">⚡ Digital Tech — Score 72</div>
+        <div class="data-row"><span class="data-label">Performance</span><span class="data-value bad">PageSpeed 48/100 · LCP 5.1s</span></div>
+        <div class="data-row"><span class="data-label">Frontend</span><span class="data-value warning">PrestaShop PHP (no headless)</span></div>
+        <div class="data-row"><span class="data-label">Marketing</span><span class="data-value good">Klaviyo + GA4 + GTM</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value warning">Migración headless multi-store</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--tech);">Ticket: 80K - 150K€</div>
+      </div>
+      <div class="analysis-card" data-delay="800">
+        <div class="analysis-card-title" style="color:var(--binnacle);">📊 Binnacle — Score 60</div>
+        <div class="data-row"><span class="data-label">Canales</span><span class="data-value warning">eComm + tiendas + almacén NL</span></div>
+        <div class="data-row"><span class="data-label">Datos</span><span class="data-value warning">GA4 + Klaviyo sin consolidar</span></div>
+        <div class="data-row"><span class="data-label">Multi-mercado</span><span class="data-value bad">Sin visibilidad cross-country</span></div>
+        <div class="data-row"><span class="data-label">Oportunidad</span><span class="data-value warning">Dashboard omnicanal EU</span></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--binnacle);">Ticket: 25K - 50K€/año</div>
+      </div>
+    </div>
+    <!-- Mini Bot Padel Nuestro -->
+    <div style="width:100%; max-width:1100px; margin-top:12px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:linear-gradient(135deg, rgba(102,54,206,0.3), rgba(16,185,129,0.3)); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Cross-sell</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">¿Cuál es la línea de entrada para Padel Nuestro?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>Boostic (score 85)</strong>, quick win más rápido: optimizar feed Shopping ES + abrir NL/DE. Luego expandir a Agency (76) para SEO multi-idioma y Tech (72) para migración headless. Ticket total: 150-310K€ primer año.</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px; text-align:center;">
+      <p style="font-size:15px; color:var(--text-dim);">Un solo prospect = <span style="color:var(--redegal-light); font-weight:700;">3 oportunidades simultáneas</span> · Ticket combinado potencial: <span style="color:#34d399; font-weight:700;">150K - 310K€</span></p>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: ESTRATEGIA DE ATAQUE 4 LÍNEAS -->
+  <div class="slide" id="slide-11">
+    <div class="example-header">
+      <span class="example-badge" style="background:linear-gradient(90deg, rgba(59,130,246,0.2), rgba(16,185,129,0.2)); color:var(--redegal-light);">Estrategia de Ataque</span>
+      <span class="example-client">Padel Nuestro</span>
+    </div>
+
+    <!-- Score bars -->
+    <div class="score-section" style="max-width:900px; margin-bottom:20px;">
+      <div class="score-row" data-delay="200">
+        <span class="score-line-name" style="color:var(--boostic);">Boostic</span>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="--score-width:85%; background:linear-gradient(90deg, var(--boostic), var(--boostic-light));">85</div></div>
+        <span class="score-tag" style="background:rgba(102,54,206,0.2); color:var(--boostic-light);">ENTRADA</span>
+      </div>
+      <div class="score-row" data-delay="400">
+        <span class="score-line-name" style="color:var(--digital);">Digital Business</span>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="--score-width:76%; background:linear-gradient(90deg, var(--digital), var(--digital-light));">76</div></div>
+        <span class="score-tag" style="background:rgba(16,185,129,0.15); color:var(--digital-light);">MES 2</span>
+      </div>
+      <div class="score-row" data-delay="600">
+        <span class="score-line-name" style="color:var(--tech);">Digital Tech</span>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="--score-width:72%; background:linear-gradient(90deg, var(--tech), var(--tech-light));">72</div></div>
+        <span class="score-tag" style="background:rgba(249,115,22,0.15); color:var(--tech-light);">MES 3</span>
+      </div>
+      <div class="score-row" data-delay="800">
+        <span class="score-line-name" style="color:var(--binnacle);">Binnacle</span>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="--score-width:60%; background:linear-gradient(90deg, var(--binnacle), var(--binnacle-light));">60</div></div>
+        <span class="score-tag" style="background:rgba(6,182,212,0.15); color:var(--binnacle-light);">MES 4+</span>
+      </div>
+    </div>
+
+    <!-- Attack timeline -->
+    <div style="width:100%; max-width:1100px;">
+      <div style="display:flex; gap:12px; width:100%;">
+
+        <!-- FASE 1: ENTRADA -->
+        <div class="analysis-card" data-delay="300" style="flex:1; border-top:3px solid var(--boostic);">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; color:var(--boostic); margin-bottom:10px;">FASE 1 · ENTRADA</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text-bright); margin-bottom:8px;">Boostic (Score 85)</div>
+          <div style="font-size:13px; color:var(--text); line-height:1.6;">
+            <strong>Por qué primero:</strong> Dolor más urgente. +15.000 productos en PrestaShop sin feed optimizado para Google Shopping. Expansión internacional sin catálogo multi-idioma.<br><br>
+            <strong>Acción:</strong> Outreach a Dir. Ecommerce. Proponer auditoría de feed con benchmark vs competidores (Wilson, Bullpadel).<br><br>
+            <strong>Gancho:</strong> "Vuestro catálogo de +15.000 refs en PrestaShop pierde visibilidad en Shopping. En 2 semanas os mostramos el gap vs competencia y los quick wins."
+          </div>
+        </div>
+
+        <!-- FASE 2: EXPANSIÓN -->
+        <div class="analysis-card" data-delay="500" style="flex:1; border-top:3px solid var(--digital);">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; color:var(--digital); margin-bottom:10px;">FASE 2 · EXPANSIÓN</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text-bright); margin-bottom:8px;">Digital Business (Score 76)</div>
+          <div style="font-size:13px; color:var(--text); line-height:1.6;">
+            <strong>Timing:</strong> Con Boostic activo, proponemos SEO internacional al Dir. Marketing.<br><br>
+            <strong>Acción:</strong> Presentar estrategia SEO para NL, DE, FR, IT. Aprovechar el almacén en Países Bajos como gancho logístico.<br><br>
+            <strong>Gancho:</strong> "Con el feed optimizado ya captáis tráfico Shopping. Ahora falta posicionar orgánicamente en los mercados donde ya tenéis almacén."
+          </div>
+        </div>
+
+        <!-- FASE 3: UPSELL -->
+        <div class="analysis-card" data-delay="700" style="flex:1; border-top:3px solid var(--tech);">
+          <div style="font-size:11px; font-weight:700; letter-spacing:2px; color:var(--tech); margin-bottom:10px;">FASE 3 · UPSELL</div>
+          <div style="font-size:15px; font-weight:700; color:var(--text-bright); margin-bottom:8px;">Digital Tech (Score 72)</div>
+          <div style="font-size:13px; color:var(--text); line-height:1.6;">
+            <strong>Timing:</strong> Con 2 líneas activas, somos partner estratégico. Reunión con CTO/Dir. Tecnología.<br><br>
+            <strong>Tech:</strong> Evolución de PrestaShop a headless. PageSpeed 48 y LCP 5.1s requieren arquitectura moderna. Multi-store para 5+ países.<br><br>
+            <strong>Binnacle (futuro):</strong> Con 3 líneas activas, consolidar analytics multi-vertical (padel, textil, accesorios) para el crecimiento omnicanal.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top:16px; text-align:center;">
+      <div style="display:inline-flex; align-items:center; gap:20px; font-size:14px;">
+        <span style="color:var(--text-dim);">Mes 1: <strong style="color:var(--boostic);">Boostic</strong></span>
+        <span style="color:var(--text-dim);">→</span>
+        <span style="color:var(--text-dim);">Mes 2: <strong style="color:var(--digital);">+ Digital Business</strong></span>
+        <span style="color:var(--text-dim);">→</span>
+        <span style="color:var(--text-dim);">Mes 3: <strong style="color:var(--tech);">+ Tech</strong></span>
+        <span style="color:var(--text-dim);">→</span>
+        <span style="color:#34d399; font-weight:700;">Partner estratégico 360°</span>
+      </div>
+    </div>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(59,130,246,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Estrategia</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Si Padel Nuestro acepta la auditoría de feed Boostic en mes 1, ¿cuál es la probabilidad de cerrar Digital Business en mes 2?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> Con auditoría Boostic exitosa, probabilidad de <strong>Digital Business en mes 2: 78%</strong> (basado en 9 casos retail similares). Approach óptimo: usar los datos de rendimiento del feed para demostrar que <strong>falta posicionamiento orgánico</strong> en los mercados de expansión (NL, DE, FR). Key stakeholder: <strong>Dir. Marketing</strong>. Trigger: presentar gap SEO internacional en semana 4.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: DASHBOARD DIRECCIÓN / CEO -->
+  <div class="slide" id="slide-12" style="padding:40px 60px;">
+    <div class="slide-tag">Panel de Dirección</div>
+    <h1 class="slide-title" style="font-size:32px; margin-bottom:16px;">Dashboard <span class="accent">CEO / Dirección</span> — Tiempo Real</h1>
+
+    <!-- TOP ROW: KPIs -->
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:10px; width:100%; max-width:1200px; margin-bottom:14px;">
+      <div class="analysis-card" data-delay="100" style="padding:14px; text-align:center; border-top:3px solid var(--redegal-accent);">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">LEADS TOTALES</div>
+        <div style="font-size:32px; font-weight:900; color:var(--text-bright); margin:4px 0;" id="kpi-leads">0</div>
+        <div style="font-size:11px; color:#34d399; font-weight:600;">+127 esta semana</div>
+      </div>
+      <div class="analysis-card" data-delay="200" style="padding:14px; text-align:center; border-top:3px solid #34d399;">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">PIPELINE (€)</div>
+        <div style="font-size:32px; font-weight:900; color:#34d399; margin:4px 0;">1.2M</div>
+        <div style="font-size:11px; color:#34d399; font-weight:600;">+340K este mes</div>
+      </div>
+      <div class="analysis-card" data-delay="300" style="padding:14px; text-align:center; border-top:3px solid var(--boostic);">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">REUNIONES</div>
+        <div style="font-size:32px; font-weight:900; color:var(--text-bright); margin:4px 0;">47</div>
+        <div style="font-size:11px; color:var(--boostic-light); font-weight:600;">12 esta semana</div>
+      </div>
+      <div class="analysis-card" data-delay="400" style="padding:14px; text-align:center; border-top:3px solid var(--tech);">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">COSTE/LEAD</div>
+        <div style="font-size:32px; font-weight:900; color:var(--text-bright); margin:4px 0;">0.38€</div>
+        <div style="font-size:11px; color:#34d399; font-weight:600;">-15% vs mes anterior</div>
+      </div>
+      <div class="analysis-card" data-delay="500" style="padding:14px; text-align:center; border-top:3px solid var(--digital);">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">TASA RESPUESTA</div>
+        <div style="font-size:32px; font-weight:900; color:var(--text-bright); margin:4px 0;">14.2%</div>
+        <div style="font-size:11px; color:#34d399; font-weight:600;">+3.1pp vs benchmark</div>
+      </div>
+      <div class="analysis-card" data-delay="600" style="padding:14px; text-align:center; border-top:3px solid var(--binnacle);">
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:600;">ROI ACTUAL</div>
+        <div style="font-size:32px; font-weight:900; color:#34d399; margin:4px 0;">18x</div>
+        <div style="font-size:11px; color:var(--text-dim); font-weight:600;">Target: 20-30x</div>
+      </div>
+    </div>
+
+    <!-- MIDDLE ROW: Pipeline por línea + Funnel + Activity -->
+    <div style="display:grid; grid-template-columns:1.2fr 0.8fr 1fr; gap:12px; width:100%; max-width:1200px; margin-bottom:14px;">
+
+      <!-- Pipeline por línea -->
+      <div class="analysis-card" data-delay="400" style="padding:18px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:12px;">PIPELINE POR LÍNEA DE NEGOCIO</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="color:var(--boostic); font-weight:600;">Boostic</span>
+            <span style="color:var(--text-dim);">387 leads · <strong style="color:var(--text-bright);">420K€</strong></span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+            <div style="width:75%; height:100%; background:var(--boostic); border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="color:var(--tech); font-weight:600;">Digital Tech</span>
+            <span style="color:var(--text-dim);">214 leads · <strong style="color:var(--text-bright);">380K€</strong></span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+            <div style="width:65%; height:100%; background:var(--tech); border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="color:var(--digital); font-weight:600;">Digital Agency</span>
+            <span style="color:var(--text-dim);">298 leads · <strong style="color:var(--text-bright);">260K€</strong></span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+            <div style="width:50%; height:100%; background:var(--digital); border-radius:4px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+            <span style="color:var(--binnacle); font-weight:600;">Binnacle</span>
+            <span style="color:var(--text-dim);">143 leads · <strong style="color:var(--text-bright);">180K€</strong></span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+            <div style="width:35%; height:100%; background:var(--binnacle); border-radius:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Funnel de conversión -->
+      <div class="analysis-card" data-delay="600" style="padding:18px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:12px;">FUNNEL CONVERSIÓN</div>
+        <div style="text-align:center;">
+          <div style="background:rgba(59,130,246,0.15); border-radius:8px; padding:8px; margin-bottom:6px; font-size:13px;">
+            <strong style="color:var(--text-bright);">1.042</strong> <span style="color:var(--text-dim);">Prospects</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-dim);">▼ 58%</div>
+          <div style="background:rgba(139,92,246,0.15); border-radius:8px; padding:8px; margin:4px 10px; font-size:13px;">
+            <strong style="color:var(--text-bright);">604</strong> <span style="color:var(--text-dim);">Score > 50</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-dim);">▼ 32%</div>
+          <div style="background:rgba(16,185,129,0.15); border-radius:8px; padding:8px; margin:4px 20px; font-size:13px;">
+            <strong style="color:var(--text-bright);">193</strong> <span style="color:var(--text-dim);">Score > 70</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-dim);">▼ 24%</div>
+          <div style="background:rgba(52,211,153,0.15); border-radius:8px; padding:8px; margin:4px 30px; font-size:13px;">
+            <strong style="color:#34d399;">47</strong> <span style="color:var(--text-dim);">Reuniones</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-dim);">▼ 36%</div>
+          <div style="background:rgba(52,211,153,0.3); border-radius:8px; padding:8px; margin:4px 40px; font-size:13px;">
+            <strong style="color:#34d399;">17</strong> <span style="color:var(--text-dim);">Propuestas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity feed + Noticias -->
+      <div class="analysis-card" data-delay="800" style="padding:18px; overflow:hidden;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:12px;">ACTIVIDAD EN TIEMPO REAL</div>
+        <div style="font-size:12px; line-height:2; color:var(--text);">
+          <div style="border-left:2px solid var(--boostic); padding-left:10px; margin-bottom:6px;">
+            <span style="color:var(--text-dim);">14:32</span> · Casa del Libro respondió email Boostic — <span style="color:#34d399;">reunión agendada</span>
+          </div>
+          <div style="border-left:2px solid var(--tech); padding-left:10px; margin-bottom:6px;">
+            <span style="color:var(--text-dim);">13:15</span> · Gandhi abrió propuesta Tech — <span style="color:var(--tech-light);">3a lectura</span>
+          </div>
+          <div style="border-left:2px solid #f59e0b; padding-left:10px; margin-bottom:6px;">
+            <span style="color:var(--text-dim);">12:40</span> · 🟢 <strong>Acelerador:</strong> Padel Nuestro confirma expansión europea
+          </div>
+          <div style="border-left:2px solid var(--binnacle); padding-left:10px; margin-bottom:6px;">
+            <span style="color:var(--text-dim);">11:20</span> · De Online Drogist score Boostic 82 + Digital 74 — <span style="color:var(--binnacle-light);">cross-sell detectado</span>
+          </div>
+          <div style="border-left:2px solid var(--digital); padding-left:10px; margin-bottom:6px;">
+            <span style="color:var(--text-dim);">10:05</span> · Mango conectó LinkedIn — <span style="color:var(--digital-light);">secuencia activa</span>
+          </div>
+          <div style="border-left:2px solid #f87171; padding-left:10px;">
+            <span style="color:var(--text-dim);">09:30</span> · 🔴 <strong>Stopper:</strong> Prospect #412 ERE anunciado — <span style="color:#f87171;">pausado</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM: Cross-sell + Alertas + Bot Dirección -->
+    <div style="display:grid; grid-template-columns:1fr 0.8fr 1fr; gap:12px; width:100%; max-width:1200px;">
+      <div class="analysis-card" data-delay="900" style="padding:14px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:8px;">CROSS-SELL DETECTADOS</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <div style="background:rgba(102,54,206,0.1); border:1px solid rgba(102,54,206,0.2); border-radius:8px; padding:6px 10px; font-size:11px;">
+            <strong style="color:var(--text-bright);">Padel Nuestro</strong> <span style="color:var(--boostic);">85</span>·<span style="color:var(--digital);">76</span>·<span style="color:var(--tech);">72</span>
+          </div>
+          <div style="background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.2); border-radius:8px; padding:6px 10px; font-size:11px;">
+            <strong style="color:var(--text-bright);">De Online Drogist</strong> <span style="color:var(--boostic);">82</span> → <span style="color:var(--digital);">74</span>
+          </div>
+          <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:8px; padding:6px 10px; font-size:11px;">
+            <strong style="color:var(--text-bright);">Casa del Libro</strong> <span style="color:var(--boostic);">78</span> → <span style="color:var(--binnacle);">71</span>
+          </div>
+          <div style="background:linear-gradient(90deg, rgba(249,115,22,0.1), rgba(16,185,129,0.1)); border:1px solid rgba(249,115,22,0.25); border-radius:8px; padding:6px 10px; font-size:11px;">
+            <strong style="color:var(--text-bright);">Gandhi</strong> <span style="color:var(--tech);">Tech 75</span> + <span style="color:var(--boostic);">Boostic 72</span>
+          </div>
+          <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:8px; padding:6px 10px; font-size:11px;">
+            <strong style="color:var(--text-bright);">Mango</strong> <span style="color:var(--binnacle);">Binnacle 75</span> → <span style="color:var(--boostic);">70</span>
+          </div>
+        </div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin:10px 0 6px;">ALERTAS</div>
+        <div style="font-size:11px; line-height:1.8; color:var(--text);">
+          <div>🔔 <strong style="color:#34d399;">Padel Nuestro</strong> — 3 líneas · 150-310K€ · <strong>aprobación</strong></div>
+          <div>🔔 <strong style="color:var(--tech-light);">Gandhi</strong> — Propuesta Tech 150K€ · follow-up CTO</div>
+          <div>🔔 <strong style="color:#fbbf24;">3 leads</strong> score >85 sin contactar >48h</div>
+        </div>
+      </div>
+
+      <!-- Bot Dirección / CEO -->
+      <div class="analysis-card" data-delay="1000" style="padding:0; grid-column: span 2;">
+        <div class="chat-bot" style="border:none;">
+          <div class="chat-header" style="background:rgba(59,130,246,0.08);">
+            <div class="chat-bot-avatar" style="background:rgba(59,130,246,0.2);">🤖</div>
+            <div>
+              <div class="chat-bot-name">Asistente de Dirección</div>
+            </div>
+            <div class="chat-bot-status">Online</div>
+          </div>
+          <!-- Toolbar: canales + selector IA -->
+          <div class="chat-toolbar">
+            <div class="chat-channel active" title="Web app">
+              <span>🌐</span> <span>Web</span>
+            </div>
+            <div class="chat-channel" title="Telegram bot" style="border-color:rgba(38,165,219,0.3);">
+              <span>✈️</span> <span style="color:#29b6f6;">Telegram</span>
+            </div>
+            <div class="ai-selector">
+              <div class="ai-option active-claude">Claude</div>
+              <div class="ai-option active-gpt">GPT</div>
+              <div class="ai-option">Ambos</div>
+            </div>
+          </div>
+          <div class="chat-messages" style="max-height:145px;">
+            <div class="chat-msg user">
+              <div class="chat-bubble">¿Cuál es el prospect con mayor ticket potencial?</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="chat-bubble"><span style="font-size:10px; color:#10a37f; font-weight:600;">GPT ·</span> Padel Nuestro (ES): ticket combinado <strong>150-310K€</strong> en 3 líneas. Boostic lidera (85). Recomiendo approach secuencial con expansión internacional.</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="chat-bubble">¿Cómo va la semana vs la anterior?</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="chat-bubble"><span style="font-size:10px; color:#e8945a; font-weight:600;">CLAUDE ·</span> <strong>127 leads</strong> (+18%), <strong>12 reuniones</strong> (+4), pipeline +<strong>340K€</strong>. Mejor línea: Boostic (52 nuevos). Alerta: 3 leads calientes >48h sin contactar.</div>
+            </div>
+            <div class="chat-msg user">
+              <div class="chat-bubble">Genera un resumen semanal PDF para el comité</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="chat-bubble"><span style="font-size:10px; color:#e8945a; font-weight:600;">CLAUDE ·</span> ✅ PDF generado: <strong style="color:var(--redegal-light); text-decoration:underline;">Informe_Semanal_S07_Feb2026.pdf</strong><br>Incluye: KPIs, pipeline por línea, top 10 oportunidades, noticias clave, cross-sell activos. Guardado en Knowledge Base y enviado al canal de Telegram de dirección.</div>
+            </div>
+          </div>
+          <!-- Knowledge Base bar -->
+          <div class="kb-bar">
+            <span class="kb-badge">📚 Knowledge Base</span>
+            <span>3.842 interacciones · 284 docs</span>
+            <span class="kb-action" style="margin-left:auto;">📄 Generar PDF</span>
+            <span class="kb-action">📋 Base Documental</span>
+            <span class="kb-action">📊 Resumen Ejecutivo</span>
+          </div>
+          <div class="chat-input">
+            <input class="chat-input-field" placeholder="Pregunta sobre pipeline, KPIs, oportunidades..." disabled>
+            <button class="chat-send-btn">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SLIDE 13: DASHBOARD — FICHA DE PROSPECT -->
+  <div class="slide" id="slide-13" style="padding:40px 60px;">
+    <div class="slide-tag">Dashboard · Ejemplo Consulta</div>
+    <h1 class="slide-title" style="font-size:30px; margin-bottom:14px;">Ficha de Prospect: <span class="accent">Padel Nuestro</span></h1>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; width:100%; max-width:1200px; margin-bottom:12px;">
+      <!-- Company Profile -->
+      <div class="analysis-card" data-delay="200" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">PERFIL EMPRESA</div>
+        <div style="font-size:18px; font-weight:800; color:var(--text-bright); margin-bottom:8px;">Padel Nuestro</div>
+        <div class="data-row"><span class="data-label">Sector</span><span class="data-value">Deportes / Retail</span></div>
+        <div class="data-row"><span class="data-label">País</span><span class="data-value">España (+ expansión EU)</span></div>
+        <div class="data-row"><span class="data-label">Empleados</span><span class="data-value good">250</span></div>
+        <div class="data-row"><span class="data-label">Revenue</span><span class="data-value good">€65M</span></div>
+        <div class="data-row"><span class="data-label">Productos</span><span class="data-value">+15.000 refs</span></div>
+        <div class="data-row"><span class="data-label">Web</span><span class="data-value">padelnuestro.com</span></div>
+        <div class="data-row"><span class="data-label">Fase</span><span class="data-value" style="color:#34d399;">Propuesta enviada</span></div>
+      </div>
+
+      <!-- Score Breakdown -->
+      <div class="analysis-card" data-delay="400" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">SCORE MULTI-LÍNEA</div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--boostic);">Boostic</span><strong style="color:var(--text-bright);">85</strong></div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:85%; height:100%; background:var(--boostic); border-radius:3px;"></div></div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--digital);">Digital Business</span><strong style="color:var(--text-bright);">76</strong></div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:76%; height:100%; background:var(--digital); border-radius:3px;"></div></div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--tech);">Digital Tech</span><strong style="color:var(--text-bright);">72</strong></div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:72%; height:100%; background:var(--tech); border-radius:3px;"></div></div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--binnacle);">Binnacle</span><strong style="color:var(--text-bright);">60</strong></div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:60%; height:100%; background:var(--binnacle); border-radius:3px;"></div></div>
+        </div>
+        <div style="margin-top:10px; padding:8px; background:rgba(52,211,153,0.08); border-radius:6px; text-align:center;">
+          <span style="font-size:11px; color:var(--text-dim);">Ticket combinado</span><br>
+          <strong style="font-size:18px; color:#34d399;">150 - 310K€</strong>
+        </div>
+      </div>
+
+      <!-- Interaction Timeline -->
+      <div class="analysis-card" data-delay="600" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">HISTORIAL DE INTERACCIÓN</div>
+        <div style="font-size:11px; line-height:2.2; color:var(--text);">
+          <div style="border-left:2px solid #34d399; padding-left:8px; margin-bottom:4px;">
+            <span style="color:var(--text-dim);">14 Feb</span> · Propuesta 3 líneas enviada a Dir. Ecommerce
+          </div>
+          <div style="border-left:2px solid var(--boostic); padding-left:8px; margin-bottom:4px;">
+            <span style="color:var(--text-dim);">12 Feb</span> · Scoring completado: 3 líneas hot + 1 warm
+          </div>
+          <div style="border-left:2px solid var(--tech); padding-left:8px; margin-bottom:4px;">
+            <span style="color:var(--text-dim);">10 Feb</span> · Análisis técnico: PrestaShop + Cloudflare + PHP
+          </div>
+          <div style="border-left:2px solid #f59e0b; padding-left:8px; margin-bottom:4px;">
+            <span style="color:var(--text-dim);">8 Feb</span> · 🟢 Acelerador: expansión europea + almacén NL
+          </div>
+          <div style="border-left:2px solid var(--redegal-accent); padding-left:8px; margin-bottom:4px;">
+            <span style="color:var(--text-dim);">5 Feb</span> · Enriquecimiento: 6 contactos C-level
+          </div>
+          <div style="border-left:2px solid var(--text-dim); padding-left:8px;">
+            <span style="color:var(--text-dim);">3 Feb</span> · Lead identificado por Enginy (ICP match)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom row: News + Contacts + Next Actions -->
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; width:100%; max-width:1200px;">
+      <!-- Key News -->
+      <div class="analysis-card" data-delay="700" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">NOTICIAS CLAVE</div>
+        <div class="news-item" style="margin-bottom:8px;">
+          <span class="news-icon" style="font-size:14px;">🟢</span>
+          <div>
+            <div style="font-size:11px; color:var(--text);">"Padel Nuestro crece un 40% y abre almacén logístico en Países Bajos"</div>
+            <span class="news-tag tag-acelerador" style="font-size:9px;">ACELERADOR</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <span class="news-icon" style="font-size:14px;">🟢</span>
+          <div>
+            <div style="font-size:11px; color:var(--text);">"El padel genera más de 4.000M€ en la economía española, expansión global"</div>
+            <span class="news-tag tag-acelerador" style="font-size:9px;">ACELERADOR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts -->
+      <div class="analysis-card" data-delay="800" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">CONTACTOS IDENTIFICADOS</div>
+        <div style="font-size:11px; line-height:2; color:var(--text);">
+          <div>👤 <strong>Alejandro Reyes</strong> · CEO · <span style="color:#34d399;">LinkedIn conectado</span></div>
+          <div>👤 <strong>Laura Martínez</strong> · Dir. Ecommerce · <span style="color:var(--text-dim);">Email enviado</span></div>
+          <div>👤 <strong>Pablo García</strong> · Dir. Marketing · <span style="color:var(--boostic-light);">Pendiente</span></div>
+          <div>👤 <strong>Marta Vidal</strong> · Dir. Internacional · <span style="color:var(--text-dim);">Identificada</span></div>
+          <div>👤 <strong>David López</strong> · CTO · <span style="color:var(--tech-light);">Email abierto 3x</span></div>
+        </div>
+      </div>
+
+      <!-- Recommended Actions -->
+      <div class="analysis-card" data-delay="900" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">ACCIONES RECOMENDADAS</div>
+        <div style="font-size:11px; line-height:2; color:var(--text);">
+          <div style="padding:4px 8px; background:rgba(52,211,153,0.08); border-radius:4px; margin-bottom:4px;">
+            ✅ <strong>Urgente:</strong> Follow-up propuesta con Dir. Ecommerce (3 días sin respuesta)
+          </div>
+          <div style="padding:4px 8px; background:rgba(249,115,22,0.08); border-radius:4px; margin-bottom:4px;">
+            📧 <strong>Email:</strong> Enviar caso de éxito Boostic sector deportes a Dir. Marketing
+          </div>
+          <div style="padding:4px 8px; background:rgba(102,54,206,0.08); border-radius:4px; margin-bottom:4px;">
+            📞 <strong>Call:</strong> Agendar demo SEO internacional con Dir. Internacional
+          </div>
+          <div style="padding:4px 8px; background:rgba(59,130,246,0.08); border-radius:4px;">
+            📋 <strong>Preparar:</strong> Auditoría feed Google Shopping + benchmark competencia
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(52,211,153,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Prospect</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option active-gpt" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Analiza el historial de Padel Nuestro: ¿hay riesgo de que frenen la expansión? ¿Qué señales monitorizar?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#20c997; font-weight:700;">GPT ·</span> <strong>Riesgo bajo (15%)</strong>. Señales positivas: crecimiento 40% confirmado, almacén NL operativo, sector padel en auge (+4.000M€). CTO abrió email 3x (interés real). <strong>Señales a monitorizar:</strong> 1) Cambios en dirección (BORME), 2) Posible entrada de competidor fuerte (Decathlon padel), 3) Ralentización del sector. Recomiendo <strong>acelerar: cerrar Boostic esta semana</strong> y presentar paquete SEO internacional.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: DASHBOARD — ANÁLISIS Y REPORTING -->
+  <div class="slide" id="slide-14" style="padding:40px 60px;">
+    <div class="slide-tag">Dashboard · Análisis</div>
+    <h1 class="slide-title" style="font-size:30px; margin-bottom:14px;">Análisis Avanzado y <span class="accent">Reporting Automático</span></h1>
+
+    <div style="display:grid; grid-template-columns:1.2fr 0.8fr 1fr; gap:12px; width:100%; max-width:1200px; margin-bottom:12px;">
+      <!-- Top Opportunities Ranking -->
+      <div class="analysis-card" data-delay="200" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">TOP OPORTUNIDADES · ESTA SEMANA</div>
+        <div style="font-size:11px; color:var(--text);">
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(52,211,153,0.08); border-radius:6px; margin-bottom:6px;">
+            <span style="font-size:16px; font-weight:900; color:#34d399; width:28px;">1</span>
+            <div style="flex:1;"><strong>Padel Nuestro</strong> · 3 líneas</div>
+            <span style="color:#34d399; font-weight:700;">310K€</span>
+          </div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(249,115,22,0.08); border-radius:6px; margin-bottom:6px;">
+            <span style="font-size:16px; font-weight:900; color:var(--tech); width:28px;">2</span>
+            <div style="flex:1;"><strong>Gandhi (MX)</strong> · Tech</div>
+            <span style="color:var(--tech); font-weight:700;">200K€</span>
+          </div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:6px;">
+            <span style="font-size:16px; font-weight:900; color:var(--boostic); width:28px;">3</span>
+            <div style="flex:1;"><strong>De Online Drogist</strong> · Boostic+Digital</div>
+            <span style="color:var(--boostic); font-weight:700;">145K€</span>
+          </div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(6,182,212,0.08); border-radius:6px; margin-bottom:6px;">
+            <span style="font-size:16px; font-weight:900; color:var(--binnacle); width:28px;">4</span>
+            <div style="flex:1;"><strong>Mango</strong> · Binnacle</div>
+            <span style="color:var(--binnacle); font-weight:700;">120K€</span>
+          </div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:6px;">
+            <span style="font-size:16px; font-weight:900; color:var(--boostic); width:28px;">5</span>
+            <div style="flex:1;"><strong>Casa del Libro</strong> · Boostic</div>
+            <span style="color:var(--boostic); font-weight:700;">95K€</span>
+          </div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(16,185,129,0.08); border-radius:6px;">
+            <span style="font-size:16px; font-weight:900; color:var(--digital); width:28px;">6</span>
+            <div style="flex:1;"><strong>Padel Nuestro</strong> · Agency</div>
+            <span style="color:var(--digital); font-weight:700;">15K€/m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sector Analysis -->
+      <div class="analysis-card" data-delay="400" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">ANÁLISIS POR SECTOR</div>
+        <div style="font-size:11px; color:var(--text);">
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Retail / eCommerce</span><strong style="color:#34d399;">312 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:75%; height:100%; background:#34d399; border-radius:3px;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Banca / Fintech</span><strong style="color:var(--binnacle);">186 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:45%; height:100%; background:var(--binnacle); border-radius:3px;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Health / Pharma</span><strong style="color:var(--digital);">148 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:36%; height:100%; background:var(--digital); border-radius:3px;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Moda / Lifestyle</span><strong style="color:var(--tech);">127 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:30%; height:100%; background:var(--tech); border-radius:3px;"></div></div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Industria / B2B</span><strong style="color:var(--boostic);">98 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:24%; height:100%; background:var(--boostic); border-radius:3px;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Otros</span><strong style="color:var(--text-dim);">171 leads</strong></div>
+            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:41%; height:100%; background:var(--text-dim); border-radius:3px;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trends + Reports -->
+      <div class="analysis-card" data-delay="600" style="padding:16px;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">TENDENCIAS MES A MES</div>
+        <div style="font-size:11px; color:var(--text); margin-bottom:12px;">
+          <div class="data-row"><span class="data-label">Leads nuevos</span><span class="data-value good">+23% vs enero</span></div>
+          <div class="data-row"><span class="data-label">Scoring medio</span><span class="data-value good">68 (+5pts)</span></div>
+          <div class="data-row"><span class="data-label">Tasa respuesta</span><span class="data-value good">14.2% (+3.1pp)</span></div>
+          <div class="data-row"><span class="data-label">Pipeline</span><span class="data-value good">+340K€ (+28%)</span></div>
+          <div class="data-row"><span class="data-label">Cross-sell</span><span class="data-value good">8 detectados (+5)</span></div>
+        </div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin:8px 0 8px;">INFORMES AUTOMÁTICOS</div>
+        <div style="font-size:11px; color:var(--text);">
+          <div style="padding:5px 8px; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.15); border-radius:6px; margin-bottom:4px; cursor:pointer;">
+            📄 <strong>Informe Semanal</strong> <span style="color:var(--text-dim); float:right;">Auto · Lunes 9:00</span>
+          </div>
+          <div style="padding:5px 8px; background:rgba(102,54,206,0.08); border:1px solid rgba(102,54,206,0.15); border-radius:6px; margin-bottom:4px; cursor:pointer;">
+            📊 <strong>Dashboard PDF</strong> <span style="color:var(--text-dim); float:right;">Bajo demanda</span>
+          </div>
+          <div style="padding:5px 8px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15); border-radius:6px; margin-bottom:4px; cursor:pointer;">
+            📋 <strong>Resumen Comité</strong> <span style="color:var(--text-dim); float:right;">Mensual · Día 1</span>
+          </div>
+          <div style="padding:5px 8px; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.15); border-radius:6px; cursor:pointer;">
+            📈 <strong>Export Excel/CSV</strong> <span style="color:var(--text-dim); float:right;">Bajo demanda</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom: Bot asking for a report -->
+    <div style="width:100%; max-width:1200px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(59,130,246,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente de Dirección</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option" style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Dame el top 3 oportunidades por ticket y sus probabilidades de cierre</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>1. Padel Nuestro</strong> 310K€ (prob. 70%, propuesta enviada) · <strong>2. Gandhi</strong> 200K€ (prob. 45%, inversión 500MDP confirmada) · <strong>3. De Online Drogist</strong> 145K€ (prob. 55%, crecimiento 35%). Pipeline ponderado: <strong>387K€</strong>. ¿Genero PDF con detalle?</div></div>
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Sí, genera PDF y envíalo al canal de Telegram del comité</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> ✅ <strong style="color:var(--redegal-light); text-decoration:underline;">Top3_Oportunidades_Feb2026.pdf</strong> generado y enviado al canal #comite-direccion en Telegram. Incluye: fichas de prospect, scores, historial y acciones recomendadas.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: IMPLEMENTATION -->
+  <div class="slide" id="slide-15">
+    <div class="slide-tag">Implementación</div>
+    <h1 class="slide-title" style="font-size:38px;">Claude programa. <span class="accent">El equipo dirige.</span></h1>
+    <div style="display:flex; gap:16px; width:100%; max-width:1100px; margin-bottom:20px; flex-wrap:wrap; justify-content:center;">
+      <div class="glass-card" style="flex:1; min-width:200px; text-align:center; padding:18px;">
+        <div style="font-size:28px; margin-bottom:6px;">🤖</div>
+        <div style="font-size:14px; font-weight:700; color:var(--redegal-light);">Claude (Anthropic)</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">Programación, arquitectura,<br>fixes, docs, testing</div>
+      </div>
+      <div class="glass-card" style="flex:1; min-width:200px; text-align:center; padding:18px;">
+        <div style="font-size:28px; margin-bottom:6px;">👨‍💻</div>
+        <div style="font-size:14px; font-weight:700; color:var(--tech);">Jorge + Gervasio + Fernando + Javier</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">Contexto, revisión, deploy,<br>validación comercial</div>
+      </div>
+      <div class="glass-card" style="flex:1; min-width:200px; text-align:center; padding:18px;">
+        <div style="font-size:28px; margin-bottom:6px;">👩‍💼</div>
+        <div style="font-size:14px; font-weight:700; color:var(--boostic-light);">Elena + Isabel</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">Supervisión, validación<br>estratégica, go/no-go</div>
+      </div>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="timeline-day done"><div class="timeline-dot">0</div><div class="timeline-text">Prep<br>APIs</div></div>
+      <div class="timeline-day done"><div class="timeline-dot">1</div><div class="timeline-text">Crawler<br>Base</div></div>
+      <div class="timeline-day done"><div class="timeline-dot">2</div><div class="timeline-text">APIs<br>SEO</div></div>
+      <div class="timeline-day done"><div class="timeline-dot">3</div><div class="timeline-text">Scoring<br>Boostic</div></div>
+      <div class="timeline-day active"><div class="timeline-dot">4</div><div class="timeline-text">HubSpot<br>+ n8n</div></div>
+      <div class="timeline-day"><div class="timeline-dot">5</div><div class="timeline-text">Multi-<br>línea</div></div>
+      <div class="timeline-day"><div class="timeline-dot">6</div><div class="timeline-text">Cross-<br>sell</div></div>
+      <div class="timeline-day"><div class="timeline-dot">7</div><div class="timeline-text">Noticias<br>v2</div></div>
+      <div class="timeline-day"><div class="timeline-dot">8</div><div class="timeline-text">Dash<br>Binnacle</div></div>
+      <div class="timeline-day"><div class="timeline-dot">9</div><div class="timeline-text">Stress<br>Test</div></div>
+      <div class="timeline-day"><div class="timeline-dot">10</div><div class="timeline-text">Demo<br>Go Live</div></div>
+    </div>
+
+    <div class="grid-3" style="margin-top:24px;">
+      <div class="glass-card" style="text-align:center;">
+        <div class="comp-label" style="font-size:12px; color:var(--text-dim); letter-spacing:1px; margin-bottom:8px;">COSTE SETUP</div>
+        <div style="font-size:38px; font-weight:900; color:var(--redegal-light);">~1.500€</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Solo APIs y licencias · <span style="color:#34d399; font-weight:700;">Equipo interno</span></div>
+      </div>
+      <div class="glass-card" style="text-align:center;">
+        <div class="comp-label" style="font-size:12px; color:var(--text-dim); letter-spacing:1px; margin-bottom:8px;">RECURRENTE</div>
+        <div style="font-size:38px; font-weight:900; color:var(--redegal-light);">~500€/mes</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">APIs + Claude · Personal interno</div>
+      </div>
+      <div class="glass-card" style="text-align:center;">
+        <div class="comp-label" style="font-size:12px; color:var(--text-dim); letter-spacing:1px; margin-bottom:8px;">ROI AÑO 1</div>
+        <div style="font-size:38px; font-weight:900; color:#34d399;">30-50x</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Sin subcontrataciones · <span style="color:#34d399; font-weight:700;">1.000+ leads/mes</span></div>
+      </div>
+    </div>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(59,130,246,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Claude (Arquitecto)</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Claude, describe la arquitectura que vas a construir: ¿qué stack, cuántos microservicios, y cómo garantizas que escale a 10.000 leads/día?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>Stack:</strong> Python FastAPI + PostgreSQL + Redis + n8n. <strong>4 microservicios:</strong> 1) Crawler/Scraper (async, Playwright), 2) Scoring Engine (Claude API + fallback GPT), 3) News Aggregator (Google News + BORME RSS), 4) Dashboard API (FastAPI + WebSockets). <strong>Escala:</strong> Workers distribuidos con Celery, rate limiting inteligente, cache de análisis 24h. A 10K leads/día: <strong>~45€/día en APIs</strong>. Sin subcontrataciones: todo equipo interno. Todo containerizado en Docker, deploy con CI/CD desde día 1.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: CLOSING -->
+  <div class="slide" id="slide-16">
+    <div class="slide-tag">Próximos Pasos</div>
+    <h1 class="slide-title" style="font-size:42px;">Un sistema que ningún<br><span class="accent">competidor puede copiar</span></h1>
+    <div style="display:flex; gap:40px; margin-top:36px; flex-wrap:wrap; justify-content:center;">
+      <div style="text-align:center; max-width:200px;">
+        <div style="font-size:36px; margin-bottom:10px;">🔍</div>
+        <div style="font-size:15px; font-weight:700; color:var(--text-bright);">Enginy ejecuta</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Búsqueda + enriquecimiento + outreach</div>
+      </div>
+      <div style="text-align:center; max-width:200px;">
+        <div style="font-size:36px; margin-bottom:10px;">🧠</div>
+        <div style="font-size:15px; font-weight:700; color:var(--text-bright);">Redegal diferencia</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Análisis técnico + scoring multi-línea</div>
+      </div>
+      <div style="text-align:center; max-width:200px;">
+        <div style="font-size:36px; margin-bottom:10px;">📰</div>
+        <div style="font-size:15px; font-weight:700; color:var(--text-bright);">Noticias dan timing</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Aceleradores + stoppers en tiempo real</div>
+      </div>
+      <div style="text-align:center; max-width:200px;">
+        <div style="font-size:36px; margin-bottom:10px;">📊</div>
+        <div style="font-size:15px; font-weight:700; color:var(--text-bright);">Binnacle visibiliza</div>
+        <div style="font-size:13px; color:var(--text-dim); margin-top:4px;">Dashboard pipeline + noticias</div>
+      </div>
+    </div>
+    <div class="glass-card" style="margin-top:36px; max-width:750px; text-align:center; border-color:var(--redegal-accent);">
+      <div style="font-size:18px; font-weight:700; color:var(--text-bright); margin-bottom:12px;">Sprint de 10 días — Próximos Pasos</div>
+      <div style="font-size:15px; color:var(--text); line-height:1.8;">
+        ✅ <strong>Jorge, Gervasio, Fernando, Javier</strong> — ejecución + contexto + validación<br>
+        ✅ <strong>Elena + Isabel</strong> — supervisión vía Dashboard Dirección<br>
+        ✅ <strong>Claude</strong> — programación, arquitectura, fixes, documentación<br>
+        ✅ 2 dashboards: <strong>Binnacle</strong> (pipeline) + <strong>Dirección</strong> (KPIs CEO)<br>
+        🚀 Día 0 → infra lista. Días 1-10 → sistema en producción.
+      </div>
+    </div>
+    <p style="font-size:22px; font-weight:800; color:var(--redegal-accent); margin-top:28px; letter-spacing:1px;">
+      4 personas internas + IA &middot; 10 días &middot; ~1.500€ APIs &middot; Sin subcontrataciones
+    </p>
+    <!-- Bot -->
+    <div style="width:100%; max-width:1100px; margin-top:14px;">
+      <div class="chat-bot" style="">
+        <div class="chat-header">
+          <div class="chat-bot-avatar" style="background:rgba(52,211,153,0.2); width:34px; height:34px; font-size:18px;">🤖</div>
+          <div><div class="chat-bot-name" style="font-size:13px;">Asistente Dirección</div></div>
+          <div class="chat-bot-status">Online</div>
+          <div class="ai-selector" style="margin-left:auto; gap:4px;">
+            <div class="ai-option active-claude" style="font-size:11px; padding:4px 8px;">Claude</div>
+            <div class="ai-option " style="font-size:11px; padding:4px 8px;">GPT</div>
+          </div>
+          <div class="chat-channel" title="Telegram" style="border-color:rgba(38,165,219,0.3); padding:4px 8px; font-size:11px; margin-left:6px;">
+            <span>✈️</span> <span style="color:#29b6f6;">TG</span>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding:10px 16px;">
+          <div class="chat-msg user"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;">Genera una proyección: si arrancamos el sprint el 24 de febrero, ¿cuándo tendríamos los primeros leads cualificados y cuánto pipeline estimado en 90 días?</div></div>
+          <div class="chat-msg bot"><div class="chat-bubble" style="font-size:13px; padding:10px 14px;"><span style="font-size:10px; color:#f0a060; font-weight:700;">CLAUDE ·</span> <strong>Timeline:</strong> Sprint 24 Feb - 7 Mar → primeros leads cualificados <strong>día 5 (28 Feb)</strong> con scoring Boostic. Sistema completo <strong>7 Mar</strong>. <strong>Proyección 90 días:</strong> ~3.100 leads analizados, ~620 score >70, ~155 reuniones, pipeline estimado <strong>1.8-2.4M€</strong>. <strong>Breakeven: semana 3</strong> (primer cierre Boostic estimado). PDF con proyección detallada disponible en Knowledge Base.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== CONTROLS ==================== -->
+<div class="controls">
+  <button class="ctrl-btn" onclick="prevSlide()" title="Anterior">◀</button>
+  <button class="ctrl-btn" id="playBtn" onclick="toggleAutoplay()" title="Auto-play">▶</button>
+  <button class="ctrl-btn" onclick="nextSlide()" title="Siguiente">▶</button>
+  <span class="slide-counter" id="slideCounter">1 / 17</span>
+</div>
+
+<script>
+// ==================== STATE ====================
+let currentSlide = 0;
+const totalSlides = 17;
+let autoplayInterval = null;
+let narrationEnabled = true;
+let isSpeaking = false;
+
+// ==================== NARRATION SCRIPTS ====================
+const narrations = [
+  // Slide 0: Title
+  "Bienvenidos al Sistema Inteligente de Prospección Comercial Automatizada de Redegal. Un sistema que combina inteligencia artificial, análisis técnico profundo e inteligencia de noticias, diseñado para las cuatro líneas de negocio: Boostic, Binnacle, Digital Tech y Digital Agency.",
+
+  // Slide 1: Problem
+  "El reto es claro: la prospección manual no escala. El 72% del tiempo comercial se pierde en leads no cualificados. Tenemos 4 líneas de negocio con necesidades completamente diferentes. Y cero visibilidad sobre el timing, es decir, cuándo es el mejor momento para contactar a un prospect. Necesitamos un sistema inteligente. Y como veis abajo, ya el bot del sistema puede cuantificar este problema: 840 horas perdidas y 420 mil euros de coste de oportunidad.",
+
+  // Slide 2: Solution
+  "La solución se basa en cuatro pilares integrados. Primero, Enginy, una plataforma de prospección B2B que automatiza búsqueda y outreach. Segundo, la Capa de Inteligencia Redegal con scrapers propios y Claude para análisis técnico profundo. Tercero, Inteligencia de Noticias que monitoriza Google News y BORME para detectar aceleradores y stoppers. Y cuarto, HubSpot más Binnacle como CRM y dashboard de pipeline.",
+
+  // Slide 3: Pipeline
+  "El pipeline tiene 6 fases. Fase 1, Enginy identifica empresas ICP. Fase 2, enriquece con más de 30 fuentes de contactos. Fase 3, nuestra capa analiza el tech stack, ecommerce, SEO y BI de cada prospect. Fase 4, rastreamos noticias en paralelo. Fase 5, Claude genera un score multi-línea con mensaje personalizado. Y Fase 6, se activa el outreach multicanal. Todo automático. Abajo podemos ver que de 500 empresas ICP, el sistema genera entre 45 y 60 leads calientes con un 82% de precisión.",
+
+  // Slide 4: Boostic - Casa del Libro
+  "Veamos un ejemplo real. Casa del Libro, la mayor cadena de librerías de España con ecommerce en Salesforce Commerce Cloud. El sistema detecta que tienen más de 500.000 referencias, con React en el frontend, Algolia para búsqueda, Criteo para retargeting, y Akamai como CDN. GA4 y GTM configurados, New Relic para monitorización. PageSpeed de 42, LCP de 5,8 segundos. El catálogo enorme no tiene feed optimizado para Google Shopping: los títulos no incluyen autor ni editorial, faltan atributos clave. Las noticias confirman que renuevan su plataforma digital y que el sector crece un 4,2%. Señal clara para Boostic.",
+
+  // Slide 5: Scoring Casa del Libro
+  "El scoring asigna a Casa del Libro un 78 en Boostic, categoría hot. A la izquierda, el mensaje outreach generado. A la derecha, el Asistente de Leads: un bot que funciona tanto desde la web como desde Telegram, para que el comercial pueda preguntar desde el móvil. El motor de IA es intercambiable: se puede usar Claude, ChatGPT, o ambos en paralelo. Aquí vemos que Claude explica el desglose del score con datos reales. Y lo más importante: cada pregunta y cada respuesta alimenta una Knowledge Base que va creciendo. Esa base se puede consultar como documentación o exportar en PDF. Así el conocimiento no se pierde: se acumula y se comparte.",
+
+  // Slide 6: Binnacle - Mango
+  "Segundo ejemplo: Mango, la multinacional de moda española con 2.700 millones de euros de facturación. El sistema detecta que tienen Adobe Analytics, Google Tag Manager, Salesforce Marketing Cloud y Tableau, pero cada herramienta funciona en su propio silo. Más de 2.700 tiendas físicas más ecommerce más app sin atribución unificada entre canales. Las noticias confirman que superan los 3.000 millones de facturación y abren 100 tiendas nuevas con estrategia omnicanal. Timing perfecto para Binnacle: consolidar todos los datos en una plataforma única. Ticket estimado entre 60 y 120 mil euros al año.",
+
+
+  // Slide 7: De Online Drogist - Boostic + Digital Business
+  "Siguiente ejemplo: De Online Drogist, farmacia online líder en Países Bajos, una oportunidad cross-sell detectada para dos líneas: Boostic y Digital Business. El sistema detecta Magento 2, GA4, Cloudflare, Google Ads y Trustpilot. Tienen 42.000 keywords y DA 48. Por Boostic, score 82: catálogo de más de 20.000 productos sin feed optimizado para Google Shopping. Por Digital Business, score 74: quieren expandirse internacionalmente pero tienen cero keywords posicionadas en Bélgica, Alemania o Francia. Las noticias confirman un crecimiento del 35% y planes de expansión. La estrategia: entrar por Boostic con la optimización de catálogo, y escalar a Digital Business con SEO internacional. Ticket combinado: 75 a 145 mil euros al año.",
+
+  // Slide 8: Tech - Gandhi
+  "Tercer ejemplo: Gandhi, la mayor cadena de librerías de México, para Digital Tech. Los datos del crawling revelan que usan VTEX con jQuery, sin arquitectura moderna. Todavía tienen Google Analytics Universal en vez de GA4. Facebook Pixel sin server-side tracking. PageSpeed de solo 38, LCP de 6,5 segundos y CLS de 0,22. Rendimiento muy por debajo del benchmark. Las noticias indican que invierten 500 millones de pesos en transformación digital y que el ecommerce mexicano crece un 28%: momento perfecto para proponer una evolución tecnológica completa. Ticket estimado de 100 a 200 mil euros.",
+
+  // Slide 9: Digital Business - Padel Nuestro
+  "Cuarto ejemplo: Padel Nuestro para Digital Business. Datos reales: PrestaShop con Cloudflare, GA4, Google Ads, Meta Pixel y Klaviyo. DA 52 con 68.000 keywords en España, pero cero posicionamiento en Países Bajos, Alemania o Francia, mercados donde ya tienen almacén logístico. La expansión internacional está confirmada pero sin estrategia SEO. Las noticias revelan un crecimiento del 40%, un nuevo almacén en Países Bajos y que el padel genera más de 4.000 millones de euros en la economía española. Necesidad urgente de SEO internacional. Ticket de 8 a 15 mil euros al mes.",
+
+  // Slide 10: Padel Nuestro - 3 líneas cross-sell
+  "Y ahora el caso estrella: Padel Nuestro con oportunidad en 3 líneas simultáneas. 250 empleados, 65 millones de euros de facturación, más de 15.000 productos y expansión europea confirmada. Boostic, score 85: feed de Google Shopping sin optimizar para un catálogo enorme de padel, textil y accesorios. Digital Business, score 76: SEO internacional para los mercados donde ya tienen logística. Digital Tech, score 72: PrestaShop necesita evolución, PageSpeed 48 y LCP 5,1 segundos. Y Binnacle en warm con 60, posible a futuro para consolidar analytics multi-vertical. Ticket combinado potencial: entre 150 y 310 mil euros.",
+
+  // Slide 11: Estrategia de ataque 3 líneas
+  "¿Cómo se ataca cuando múltiples líneas aplican? Con una estrategia secuencial. Fase 1, entrada por Boostic, que tiene el score más alto con 85. El dolor es inmediato: más de 15.000 productos sin feed optimizado para Shopping. Proponemos una auditoría de feed con benchmark contra Wilson y Bullpadel. Fase 2, una vez dentro, expandimos a Digital Business para SEO internacional. Con el feed optimizado captando tráfico de pago, el siguiente paso natural es posicionar orgánicamente en NL, DE y FR donde ya tienen almacén. Fase 3, ya como partner estratégico con 2 líneas activas, proponemos Digital Tech para evolucionar PrestaShop a headless. En 3 meses pasamos de prospect a partner estratégico. El bot calcula un 78% de probabilidad de cerrar Digital Business en mes 2 si la auditoría Boostic es exitosa.",
+
+  // Slide 12: Dashboard Dirección
+  "Panel de Dirección en tiempo real. Arriba los 6 KPIs. En el centro, pipeline por línea, funnel y actividad. En la actividad vemos a Casa del Libro respondiendo al email de Boostic, Gandhi abriendo la propuesta Tech, y Padel Nuestro con su acelerador de expansión europea. Abajo a la izquierda, cross-sell detectados: Padel Nuestro con 3 líneas, De Online Drogist con Boostic y Digital, y los demás. Y a la derecha, el Asistente de Dirección: conectado por web y por Telegram, con motor Claude o ChatGPT a elegir. Todas las interacciones alimentan la Knowledge Base. 3.842 interacciones ya guardadas, 284 documentos generados. El conocimiento del sistema crece con cada uso.",
+
+  // Slide 13: Dashboard - Ficha de Prospect
+  "Desde el dashboard, dirección puede consultar la ficha completa de cualquier prospect. Aquí vemos Padel Nuestro: perfil de empresa con 250 empleados y 65 millones de euros, el score detallado por cada línea de negocio — Boostic 85, Digital Business 76, Tech 72, Binnacle 60 — y el ticket combinado de 150 a 310 mil euros. A la derecha, el historial completo de interacciones desde que Enginy identificó el lead. Abajo, las noticias clave que activan aceleradores como la expansión europea y el almacén en Países Bajos, los 5 contactos clave identificados con su estado de contacto, y las acciones recomendadas por la IA priorizadas por urgencia.",
+
+  // Slide 14: Dashboard - Análisis y Reporting
+  "El dashboard también ofrece análisis avanzado. Arriba a la izquierda, el ranking de top oportunidades por ticket potencial con Padel Nuestro a la cabeza con 310 mil euros, seguido de Gandhi con 200 mil y De Online Drogist con 145 mil. En el centro, el análisis sectorial muestra que Retail y eCommerce lidera con 312 leads. A la derecha, las tendencias mes a mes: leads más 23%, scoring medio subiendo 5 puntos, pipeline creciendo un 28%. Y lo más importante: informes automáticos. El informe semanal se genera solo cada lunes. El dashboard PDF y el resumen para comité están disponibles bajo demanda. Todo exportable a Excel. Y por supuesto, el bot de dirección puede generar y enviar cualquier informe directamente al canal de Telegram del comité.",
+
+  // Slide 15: Implementation
+  "La implementación: Claude hace toda la programación, arquitectura, fixes y documentación. Jorge, Gervasio, Fernando y Javier aportan contexto, revisan y despliegan. Elena e Isabel supervisan desde el dashboard de dirección y dan el go o no-go. 10 días laborables. Coste de setup de solo 1.500 euros en APIs y licencias, sin subcontrataciones porque todo el equipo es interno. ROI del primer año de 30 a 50 veces la inversión. Y como veis, Claude ya describe la arquitectura que va a construir: 4 microservicios, stack Python con FastAPI, y capacidad para procesar 10.000 leads al día por solo 45 euros diarios en APIs.",
+
+  // Slide 16: Closing
+  "En resumen: Enginy ejecuta, la inteligencia Redegal diferencia, las noticias dan timing, Binnacle gestiona el pipeline y el dashboard de dirección da visibilidad total al CEO. Un sistema que ningún competidor puede copiar. El equipo está definido: Jorge, Gervasio, Fernando y Javier en ejecución, Elena e Isabel en supervisión estratégica, y Claude en programación y arquitectura. 1.500 euros en APIs. 10 días. Equipo interno. Sin subcontrataciones. Claude construye. Redegal dirige. El bot nos proyecta que si arrancamos el 24 de febrero, tendríamos los primeros leads cualificados el día 5, y en 90 días un pipeline de entre 1,8 y 2,4 millones de euros. El breakeven se alcanza en la semana 3."
+];
+
+// ==================== PARTICLES ====================
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function initCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 2 + 0.5,
+      o: Math.random() * 0.3 + 0.05
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(59, 130, 246, ${p.o})`;
+    ctx.fill();
+  });
+
+  // Draw connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 150) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(59, 130, 246, ${0.05 * (1 - dist / 150)})`;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+
+initCanvas();
+drawParticles();
+window.addEventListener('resize', initCanvas);
+
+// ==================== SLIDE NAVIGATION ====================
+function showSlide(index) {
+  if (index < 0 || index >= totalSlides) return;
+
+  // Hide current
+  const current = document.getElementById(`slide-${currentSlide}`);
+  if (current) {
+    current.classList.remove('active');
+    current.classList.add('exit-up');
+    setTimeout(() => current.classList.remove('exit-up'), 800);
+  }
+
+  currentSlide = index;
+
+  // Show new
+  const next = document.getElementById(`slide-${currentSlide}`);
+  if (next) {
+    next.classList.add('active');
+  }
+
+  // Update counter
+  document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+
+  // Update progress
+  document.getElementById('progressBar').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+  // Animate slide elements
+  animateSlide(currentSlide);
+
+  // Narrate
+  if (narrationEnabled) {
+    speakText(narrations[currentSlide]);
+  }
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) showSlide(currentSlide - 1);
+}
+
+// ==================== ANIMATION ====================
+function animateSlide(index) {
+  const slide = document.getElementById(`slide-${index}`);
+  if (!slide) return;
+
+  // Animate pipeline steps
+  if (index === 3) {
+    slide.querySelectorAll('.pipeline-step, .pipeline-arrow').forEach(el => {
+      const delay = parseInt(el.dataset.delay) || 0;
+      setTimeout(() => el.classList.add('visible'), delay);
+    });
+  }
+
+  // Animate analysis cards
+  if ([4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].includes(index)) {
+    slide.querySelectorAll('.analysis-card').forEach(el => {
+      const delay = parseInt(el.dataset.delay) || 0;
+      setTimeout(() => el.classList.add('visible'), delay);
+    });
+  }
+
+  // Animate score bars
+  if (index === 5 || index === 11) {
+    slide.querySelectorAll('.score-row').forEach(el => {
+      const delay = parseInt(el.dataset.delay) || 0;
+      setTimeout(() => {
+        el.classList.add('visible');
+        el.querySelector('.score-bar-fill').classList.add('animated');
+      }, delay);
+    });
+  }
+
+
+  // Animate KPI counter on dashboard slide
+  if (index === 12) {
+    const kpiEl = document.getElementById('kpi-leads');
+    if (kpiEl) {
+      let count = 0;
+      const target = 1042;
+      const step = Math.ceil(target / 40);
+      const interval = setInterval(() => {
+        count += step;
+        if (count >= target) { count = target; clearInterval(interval); }
+        kpiEl.textContent = count.toLocaleString('es-ES');
+      }, 50);
+    }
+  }
+
+  // Animate fade children
+  slide.querySelectorAll('.fade-child').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 200 + 300);
+  });
+}
+
+// ==================== NARRATION (Web Speech API) ====================
+function speakText(text) {
+  if (!narrationEnabled || !text) return;
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'es-ES';
+  utterance.rate = 0.92;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  // Try to get a good Spanish voice
+  const voices = window.speechSynthesis.getVoices();
+  const spanishVoice = voices.find(v => v.lang === 'es-ES' && v.name.includes('Jorge')) ||
+                       voices.find(v => v.lang === 'es-ES' && v.name.includes('Monica')) ||
+                       voices.find(v => v.lang === 'es-ES' && v.localService) ||
+                       voices.find(v => v.lang.startsWith('es'));
+  if (spanishVoice) utterance.voice = spanishVoice;
+
+  // Show subtitles
+  const subtitles = document.getElementById('subtitles');
+  subtitles.textContent = text;
+  subtitles.classList.add('visible');
+
+  utterance.onstart = () => {
+    isSpeaking = true;
+    document.getElementById('audioWave').classList.remove('paused');
+  };
+
+  utterance.onend = () => {
+    isSpeaking = false;
+    subtitles.classList.remove('visible');
+    document.getElementById('audioWave').classList.add('paused');
+  };
+
+  // Small delay for slide transition
+  setTimeout(() => window.speechSynthesis.speak(utterance), 600);
+}
+
+function toggleNarration() {
+  narrationEnabled = !narrationEnabled;
+  document.getElementById('narrationLabel').textContent = narrationEnabled ? 'Audio ON' : 'Audio OFF';
+  if (!narrationEnabled) {
+    window.speechSynthesis.cancel();
+    document.getElementById('subtitles').classList.remove('visible');
+    document.getElementById('audioWave').classList.add('paused');
+  } else {
+    speakText(narrations[currentSlide]);
+  }
+}
+
+// ==================== AUTOPLAY ====================
+function toggleAutoplay() {
+  const btn = document.getElementById('playBtn');
+  if (autoplayInterval) {
+    clearInterval(autoplayInterval);
+    autoplayInterval = null;
+    btn.textContent = '▶';
+    btn.classList.remove('active');
+  } else {
+    btn.textContent = '⏸';
+    btn.classList.add('active');
+    // Wait for narration to finish before advancing
+    autoplayInterval = setInterval(() => {
+      if (!isSpeaking) {
+        if (currentSlide < totalSlides - 1) {
+          nextSlide();
+        } else {
+          clearInterval(autoplayInterval);
+          autoplayInterval = null;
+          btn.textContent = '▶';
+          btn.classList.remove('active');
+        }
+      }
+    }, 1500);
+  }
+}
+
+// ==================== KEYBOARD ====================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    nextSlide();
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    prevSlide();
+  }
+  if (e.key === 'a' || e.key === 'A') {
+    toggleNarration();
+  }
+  if (e.key === 'p' || e.key === 'P') {
+    toggleAutoplay();
+  }
+});
+
+// ==================== INIT ====================
+// Load voices (async on some browsers)
+window.speechSynthesis.onvoiceschanged = () => {
+  // Voices loaded
+};
+
+// Start with first narration after a moment
+setTimeout(() => {
+  if (narrationEnabled) speakText(narrations[0]);
+}, 1000);
+
+// Animate first slide
+animateSlide(0);
+</script>
+</body>
+</html>

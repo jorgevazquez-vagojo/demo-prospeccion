@@ -147,7 +147,7 @@ function showSlide(index) {
 
   // Narrate
   if (narrationEnabled) {
-    speakText(narrations[currentSlide]);
+    speakText(null, currentSlide);
   }
 }
 
@@ -212,54 +212,58 @@ function animateSlide(index) {
   });
 }
 
-// ==================== NARRATION (Web Speech API) ====================
-function speakText(text) {
-  if (!narrationEnabled || !text) return;
-  window.speechSynthesis.cancel();
+// ==================== NARRATION (Pre-recorded MP3) ====================
+let currentAudio = null;
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'es-ES';
-  utterance.rate = 0.92;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
+function speakText(text, slideIndex) {
+  if (!narrationEnabled) return;
 
-  // Try to get a good Spanish voice
-  const voices = window.speechSynthesis.getVoices();
-  const spanishVoice = voices.find(v => v.lang === 'es-ES' && v.name.includes('Jorge')) ||
-                       voices.find(v => v.lang === 'es-ES' && v.name.includes('Monica')) ||
-                       voices.find(v => v.lang === 'es-ES' && v.localService) ||
-                       voices.find(v => v.lang.startsWith('es'));
-  if (spanishVoice) utterance.voice = spanishVoice;
+  // Stop any playing audio
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
 
-  // Show subtitles
-  const subtitles = document.getElementById('subtitles');
-  subtitles.textContent = text;
-  subtitles.classList.add('visible');
+  const idx = (slideIndex !== undefined) ? slideIndex : currentSlide;
+  const pad = String(idx).padStart(2, '0');
+  const audio = new Audio(`audio/slide_${pad}.mp3`);
+  currentAudio = audio;
 
-  utterance.onstart = () => {
+  audio.onplay = () => {
     isSpeaking = true;
     document.getElementById('audioWave').classList.remove('paused');
   };
 
-  utterance.onend = () => {
+  audio.onended = () => {
     isSpeaking = false;
-    subtitles.classList.remove('visible');
     document.getElementById('audioWave').classList.add('paused');
+    currentAudio = null;
+  };
+
+  audio.onerror = () => {
+    isSpeaking = false;
+    document.getElementById('audioWave').classList.add('paused');
+    currentAudio = null;
   };
 
   // Small delay for slide transition
-  setTimeout(() => window.speechSynthesis.speak(utterance), 600);
+  setTimeout(() => audio.play().catch(() => {}), 600);
 }
 
 function toggleNarration() {
   narrationEnabled = !narrationEnabled;
   document.getElementById('narrationLabel').textContent = narrationEnabled ? 'Audio ON' : 'Audio OFF';
   if (!narrationEnabled) {
-    window.speechSynthesis.cancel();
-    document.getElementById('subtitles').classList.remove('visible');
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+    isSpeaking = false;
     document.getElementById('audioWave').classList.add('paused');
   } else {
-    speakText(narrations[currentSlide]);
+    speakText(null, currentSlide);
   }
 }
 
@@ -315,22 +319,15 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== INIT ====================
-// Load voices (async on some browsers)
-window.speechSynthesis.onvoiceschanged = () => {
-  // Voices loaded
-};
-
 // Animate first slide (but don't speak yet — wait for user click)
 animateSlide(0);
 
 function startPresentation() {
   // Remove overlay
   document.getElementById('startOverlay').style.display = 'none';
-  // Unlock speech synthesis with user gesture
-  window.speechSynthesis.cancel();
   // Start narration for first slide
   if (narrationEnabled) {
-    speakText(narrations[0]);
+    speakText(null, 0);
   }
   // Auto-start autoplay
   slideShownAt = Date.now();

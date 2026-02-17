@@ -1021,6 +1021,16 @@ body {
 <!-- Progress Bar -->
 <div class="progress-bar" id="progressBar"></div>
 
+<!-- START OVERLAY -->
+<div id="startOverlay" style="position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg, #0f1729 0%, #1a2744 50%, #0f2030 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;" onclick="startPresentation()">
+  <div style="font-size:14px; letter-spacing:6px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:24px;">Redegal · Sistema de Prospección</div>
+  <div style="width:100px; height:100px; border-radius:50%; background:rgba(59,130,246,0.15); border:2px solid rgba(59,130,246,0.4); display:flex; align-items:center; justify-content:center; margin-bottom:24px; transition:all 0.3s;" onmouseover="this.style.background='rgba(59,130,246,0.3)';this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(59,130,246,0.15)';this.style.transform='scale(1)'">
+    <span style="font-size:42px; margin-left:6px;">▶</span>
+  </div>
+  <div style="font-size:18px; color:var(--text); font-weight:600;">Iniciar presentación</div>
+  <div style="font-size:13px; color:var(--text-dim); margin-top:8px;">Click para comenzar con audio</div>
+</div>
+
 <!-- Brand -->
 <div class="brand-top">REDE<span>GAL</span></div>
 
@@ -2810,6 +2820,9 @@ function toggleNarration() {
 }
 
 // ==================== AUTOPLAY ====================
+let slideShownAt = Date.now();
+const MIN_SLIDE_TIME = 8000; // Mínimo 8 segundos por slide aunque no haya narración
+
 function toggleAutoplay() {
   const btn = document.getElementById('playBtn');
   if (autoplayInterval) {
@@ -2820,10 +2833,13 @@ function toggleAutoplay() {
   } else {
     btn.textContent = '⏸';
     btn.classList.add('active');
-    // Wait for narration to finish before advancing
+    slideShownAt = Date.now();
+    // Wait for narration to finish AND minimum time before advancing
     autoplayInterval = setInterval(() => {
-      if (!isSpeaking) {
+      const elapsed = Date.now() - slideShownAt;
+      if (!isSpeaking && elapsed >= MIN_SLIDE_TIME) {
         if (currentSlide < totalSlides - 1) {
+          slideShownAt = Date.now();
           nextSlide();
         } else {
           clearInterval(autoplayInterval);
@@ -2832,7 +2848,7 @@ function toggleAutoplay() {
           btn.classList.remove('active');
         }
       }
-    }, 1500);
+    }, 1000);
   }
 }
 
@@ -2860,13 +2876,22 @@ window.speechSynthesis.onvoiceschanged = () => {
   // Voices loaded
 };
 
-// Start with first narration after a moment
-setTimeout(() => {
-  if (narrationEnabled) speakText(narrations[0]);
-}, 1000);
-
-// Animate first slide
+// Animate first slide (but don't speak yet — wait for user click)
 animateSlide(0);
+
+function startPresentation() {
+  // Remove overlay
+  document.getElementById('startOverlay').style.display = 'none';
+  // Unlock speech synthesis with user gesture
+  window.speechSynthesis.cancel();
+  // Start narration for first slide
+  if (narrationEnabled) {
+    speakText(narrations[0]);
+  }
+  // Auto-start autoplay
+  slideShownAt = Date.now();
+  toggleAutoplay();
+}
 </script>
 </body>
 </html>

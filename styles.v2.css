@@ -23,6 +23,15 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+/* Twemoji: emojis como imágenes SVG */
+img.emoji {
+  height: 1.2em;
+  width: 1.2em;
+  margin: 0 0.05em 0 0.1em;
+  vertical-align: -0.2em;
+  display: inline;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--redegal-dark);

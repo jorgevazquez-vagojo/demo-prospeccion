@@ -1705,6 +1705,15 @@
   <span class="slide-counter" id="slideCounter">1 / 19</span>
 </div>
 
+<script src="https://unpkg.com/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <script src="app.v2.js?v=3"></script>
+<script>
+  // Convierte emojis Unicode a imágenes SVG para compatibilidad universal
+  twemoji.parse(document.body, {
+    folder: 'svg',
+    ext: '.svg',
+    base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+  });
+</script>
 </body>
 </html>

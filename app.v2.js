@@ -233,8 +233,7 @@ function speakText(text, slideIndex) {
 
   const idx = (slideIndex !== undefined) ? slideIndex : currentSlide;
   const pad = String(idx).padStart(2, '0');
-  const ext = (idx === 7 || idx === 8) ? 'm4a' : 'mp3';
-  const audio = new Audio(`audio/slide_${pad}.${ext}`);
+  const audio = new Audio(`audio/slide_${pad}.mp3`);
   currentAudio = audio;
 
   audio.onplay = () => {

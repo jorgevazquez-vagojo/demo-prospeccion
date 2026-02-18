@@ -233,16 +233,8 @@ function speakText(text, slideIndex) {
 
   const idx = (slideIndex !== undefined) ? slideIndex : currentSlide;
   const pad = String(idx).padStart(2, '0');
-  const audio = new Audio(`audio/slide_${pad}.mp3`);
-  audio.onerror = function() {
-    // Fallback to m4a if mp3 not found
-    const fallback = new Audio(`audio/slide_${pad}.m4a`);
-    fallback.onplay = audio.onplay;
-    fallback.onended = audio.onended;
-    fallback.onerror = function() { isSpeaking = false; document.getElementById('audioWave').classList.add('paused'); };
-    currentAudio = fallback;
-    setTimeout(() => fallback.play().catch(() => {}), 100);
-  };
+  const ext = (idx === 7 || idx === 8) ? 'm4a' : 'mp3';
+  const audio = new Audio(`audio/slide_${pad}.${ext}`);
   currentAudio = audio;
 
   audio.onplay = () => {

@@ -1,6 +1,6 @@
 // ==================== STATE ====================
 let currentSlide = 0;
-const totalSlides = 17;
+const totalSlides = 19;
 let autoplayInterval = null;
 let narrationEnabled = true;
 let isSpeaking = false;
@@ -28,34 +28,40 @@ const narrations = [
   // Slide 6: Binnacle - Mango
   "Segundo ejemplo: Mango, la multinacional de moda española con 2.700 millones de euros de facturación. El sistema detecta que tienen Adobe Analytics, Google Tag Manager, Salesforce Marketing Cloud y Tableau, pero cada herramienta funciona en su propio silo. Más de 2.700 tiendas físicas más ecommerce más app sin atribución unificada entre canales. Las noticias confirman que superan los 3.000 millones de facturación y abren 100 tiendas nuevas con estrategia omnicanal. Timing perfecto para Binnacle: consolidar todos los datos en una plataforma única. Ticket estimado entre 60 y 120 mil euros al año.",
 
-  // Slide 7: De Online Drogist - Boostic + Digital Business
+  // Slide 7: Binnacle - CBNK (Banco de Caminos)
+  "Siguiente ejemplo para Binnacle: CBNK, antes conocido como Banco Caminos. Un banco de nicho con 3.422 millones de euros en activos, especializado en colectivos profesionales: ingenieros, farmacéuticos y médicos. El sistema detecta Adobe Experience Manager, Google Analytics con GTM, Salesforce como CRM, y SAP SuccessFactors para recursos humanos, migrado recientemente desde Excel. El dato clave: en 2023 fusionaron Banco Caminos con Bancofar, y aún no tienen un BI unificado que consolide los datos de ambas entidades. Las noticias confirman un beneficio neto de 18 millones, un 43% más, y que el CEO reconoce que el reto es llevar el trato humano al mundo digital. Ticket Binnacle estimado: entre 36 y 60 mil euros al año.",
+
+  // Slide 8: Binnacle - CaixaBank
+  "Y ahora un caso de gran envergadura: CaixaBank, el mayor banco doméstico de España con 20,7 millones de clientes y 46.950 empleados. El sistema detecta Qlik Sense como BI principal con 25.000 usuarios, un Data Lake de más de 4 petabytes con 300 fuentes, y partnership con Google Cloud. Pero Qlik cubre lo operativo, no lo estratégico. La C-suite carece de una capa de insights ejecutivos para competitive intelligence y benchmarking sectorial. Las noticias confirman el Plan Cosmos con 5.000 millones de inversión en tecnología y el proyecto GalaxIA de inteligencia artificial generativa. Post-fusión con Bankia, aún hay datos heterogéneos en integración. Binnacle se posiciona como complemento estratégico de Qlik. Ticket estimado: entre 60 y 120 mil euros al año.",
+
+  // Slide 9: De Online Drogist
   "Siguiente ejemplo: De Online Drogist, farmacia online líder en Países Bajos, una oportunidad cross-sell detectada para dos líneas: Boostic y Digital Business. El sistema detecta Magento 2, GA4, Cloudflare, Google Ads y Trustpilot. Tienen 42.000 keywords y DA 48. Por Boostic, score 82: catálogo de más de 20.000 productos sin feed optimizado para Google Shopping. Por Digital Business, score 74: quieren expandirse internacionalmente pero tienen cero keywords posicionadas en Bélgica, Alemania o Francia. Las noticias confirman un crecimiento del 35% y planes de expansión. La estrategia: entrar por Boostic con la optimización de catálogo, y escalar a Digital Business con SEO internacional. Ticket combinado: 75 a 145 mil euros al año.",
 
-  // Slide 8: Tech - Gandhi
+  // Slide 10: Tech - Gandhi
   "Tercer ejemplo: Gandhi, la mayor cadena de librerías de México, para Digital Tech. Los datos del crawling revelan que usan VTEX con jQuery, sin arquitectura moderna. Todavía tienen Google Analytics Universal en vez de GA4. Facebook Pixel sin server-side tracking. PageSpeed de solo 38, LCP de 6,5 segundos y CLS de 0,22. Rendimiento muy por debajo del benchmark. Las noticias indican que invierten 500 millones de pesos en transformación digital y que el ecommerce mexicano crece un 28%: momento perfecto para proponer una evolución tecnológica completa. Ticket estimado de 100 a 200 mil euros.",
 
-  // Slide 9: Digital Business - Padel Nuestro
-  "Cuarto ejemplo: Padel Nuestro para Digital Business. Datos reales: PrestaShop con Cloudflare, GA4, Google Ads, Meta Pixel y Klaviyo. DA 52 con 68.000 keywords en España, pero cero posicionamiento en Países Bajos, Alemania o Francia, mercados donde ya tienen almacén logístico. La expansión internacional está confirmada pero sin estrategia SEO. Las noticias revelan un crecimiento del 40%, un nuevo almacén en Países Bajos y que el padel genera más de 4.000 millones de euros en la economía española. Necesidad urgente de SEO internacional. Ticket de 8 a 15 mil euros al mes.",
+  // Slide 11: Digital Business - Padel Nuestro
+  "Cuarto ejemplo: Padel Nuestro para Digital Business. Datos reales: Adobe Commerce con Cloudflare, GA4, Google Ads, Meta Pixel y Klaviyo. DA 52 con 68.000 keywords en España, pero cero posicionamiento en Países Bajos, Alemania o Francia, mercados donde ya tienen almacén logístico. La expansión internacional está confirmada pero sin estrategia SEO. Las noticias revelan un crecimiento del 40%, un nuevo almacén en Países Bajos y que el padel genera más de 4.000 millones de euros en la economía española. Necesidad urgente de SEO internacional. Ticket de 8 a 15 mil euros al mes.",
 
-  // Slide 10: Padel Nuestro - 3 líneas cross-sell
-  "Y ahora el caso estrella: Padel Nuestro con oportunidad en 3 líneas simultáneas. 250 empleados, 65 millones de euros de facturación, más de 15.000 productos y expansión europea confirmada. Boostic, score 85: feed de Google Shopping sin optimizar para un catálogo enorme de padel, textil y accesorios. Digital Business, score 76: SEO internacional para los mercados donde ya tienen logística. Digital Tech, score 72: PrestaShop necesita evolución, PageSpeed 48 y LCP 5,1 segundos. Y Binnacle en warm con 60, posible a futuro para consolidar analytics multi-vertical. Ticket combinado potencial: entre 150 y 310 mil euros.",
+  // Slide 12: Padel Nuestro - 3 líneas cross-sell
+  "Y ahora el caso estrella: Padel Nuestro con oportunidad en 3 líneas simultáneas. 250 empleados, 65 millones de euros de facturación, más de 15.000 productos y expansión europea confirmada. Boostic, score 85: feed de Google Shopping sin optimizar para un catálogo enorme de padel, textil y accesorios. Digital Business, score 76: SEO internacional para los mercados donde ya tienen logística. Digital Tech, score 72: Adobe Commerce necesita evolución, PageSpeed 48 y LCP 5,1 segundos. Y Binnacle en warm con 60, posible a futuro para consolidar analytics multi-vertical. Ticket combinado potencial: entre 150 y 310 mil euros.",
 
-  // Slide 11: Estrategia de ataque 3 líneas
-  "¿Cómo se ataca cuando múltiples líneas aplican? Con una estrategia secuencial. Fase 1, entrada por Boostic, que tiene el score más alto con 85. El dolor es inmediato: más de 15.000 productos sin feed optimizado para Shopping. Proponemos una auditoría de feed con benchmark contra Wilson y Bullpadel. Fase 2, una vez dentro, expandimos a Digital Business para SEO internacional. Con el feed optimizado captando tráfico de pago, el siguiente paso natural es posicionar orgánicamente en NL, DE y FR donde ya tienen almacén. Fase 3, ya como partner estratégico con 2 líneas activas, proponemos Digital Tech para evolucionar PrestaShop a headless. En 3 meses pasamos de prospect a partner estratégico. El bot calcula un 78% de probabilidad de cerrar Digital Business en mes 2 si la auditoría Boostic es exitosa.",
+  // Slide 13: Estrategia de ataque 3 líneas
+  "¿Cómo se ataca cuando múltiples líneas aplican? Con una estrategia secuencial. Fase 1, entrada por Boostic, que tiene el score más alto con 85. El dolor es inmediato: más de 15.000 productos sin feed optimizado para Shopping. Proponemos una auditoría de feed con benchmark contra Wilson y Bullpadel. Fase 2, una vez dentro, expandimos a Digital Business para SEO internacional. Con el feed optimizado captando tráfico de pago, el siguiente paso natural es posicionar orgánicamente en NL, DE y FR donde ya tienen almacén. Fase 3, ya como partner estratégico con 2 líneas activas, proponemos Digital Tech para evolucionar Adobe Commerce a headless. En 3 meses pasamos de prospect a partner estratégico. El bot calcula un 78% de probabilidad de cerrar Digital Business en mes 2 si la auditoría Boostic es exitosa.",
 
-  // Slide 12: Dashboard Dirección
+  // Slide 14: Dashboard Dirección
   "Panel de Dirección en tiempo real. Arriba los 6 KPIs. En el centro, pipeline por línea, funnel y actividad. En la actividad vemos a Casa del Libro respondiendo al email de Boostic, Gandhi abriendo la propuesta Tech, y Padel Nuestro con su acelerador de expansión europea. Abajo a la izquierda, cross-sell detectados: Padel Nuestro con 3 líneas, De Online Drogist con Boostic y Digital, y los demás. Y a la derecha, el Asistente de Dirección: conectado por web y por Telegram, con motor Claude o ChatGPT a elegir. Todas las interacciones alimentan la Knowledge Base. 3.842 interacciones ya guardadas, 284 documentos generados. El conocimiento del sistema crece con cada uso.",
 
-  // Slide 13: Dashboard - Ficha de Prospect
+  // Slide 15: Dashboard - Ficha de Prospect
   "Desde el dashboard, dirección puede consultar la ficha completa de cualquier prospect. Aquí vemos Padel Nuestro: perfil de empresa con 250 empleados y 65 millones de euros, el score detallado por cada línea de negocio — Boostic 85, Digital Business 76, Tech 72, Binnacle 60 — y el ticket combinado de 150 a 310 mil euros. A la derecha, el historial completo de interacciones desde que Enginy identificó el lead. Abajo, las noticias clave que activan aceleradores como la expansión europea y el almacén en Países Bajos, los 5 contactos clave identificados con su estado de contacto, y las acciones recomendadas por la IA priorizadas por urgencia.",
 
-  // Slide 14: Dashboard - Análisis y Reporting
+  // Slide 16: Dashboard - Análisis y Reporting
   "El dashboard también ofrece análisis avanzado. Arriba a la izquierda, el ranking de top oportunidades por ticket potencial con Padel Nuestro a la cabeza con 310 mil euros, seguido de Gandhi con 200 mil y De Online Drogist con 145 mil. En el centro, el análisis sectorial muestra que Retail y eCommerce lidera con 312 leads. A la derecha, las tendencias mes a mes: leads más 23%, scoring medio subiendo 5 puntos, pipeline creciendo un 28%. Y lo más importante: informes automáticos. El informe semanal se genera solo cada lunes. El dashboard PDF y el resumen para comité están disponibles bajo demanda. Todo exportable a Excel. Y por supuesto, el bot de dirección puede generar y enviar cualquier informe directamente al canal de Telegram del comité.",
 
-  // Slide 15: Implementation
+  // Slide 17: Implementation
   "La implementación: Claude hace toda la programación, arquitectura, fixes y documentación. Jorge, Gervasio, Fernando y Javier aportan contexto, revisan y despliegan. Elena e Isabel supervisan desde el dashboard de dirección y dan el go o no-go. 10 días laborables. Coste de setup de solo 1.500 euros en APIs y licencias, sin subcontrataciones porque todo el equipo es interno. ROI del primer año de 30 a 50 veces la inversión. Y como veis, Claude ya describe la arquitectura que va a construir: 4 microservicios, stack Python con FastAPI, y capacidad para procesar 10.000 leads al día por solo 45 euros diarios en APIs.",
 
-  // Slide 16: Closing
+  // Slide 18: Closing
   "En resumen: Enginy ejecuta, la inteligencia Redegal diferencia, las noticias dan timing, Binnacle gestiona el pipeline y el dashboard de dirección da visibilidad total al CEO. Un sistema que ningún competidor puede copiar. El equipo está definido: Jorge, Gervasio, Fernando y Javier en ejecución, Elena e Isabel en supervisión estratégica, y Claude en programación y arquitectura. 1.500 euros en APIs. 10 días. Equipo interno. Sin subcontrataciones. Claude construye. Redegal dirige. El bot nos proyecta que si arrancamos el 24 de febrero, tendríamos los primeros leads cualificados el día 5, y en 90 días un pipeline de entre 1,8 y 2,4 millones de euros. El breakeven se alcanza en la semana 3."
 ];
 
@@ -228,6 +234,15 @@ function speakText(text, slideIndex) {
   const idx = (slideIndex !== undefined) ? slideIndex : currentSlide;
   const pad = String(idx).padStart(2, '0');
   const audio = new Audio(`audio/slide_${pad}.mp3`);
+  audio.onerror = function() {
+    // Fallback to m4a if mp3 not found
+    const fallback = new Audio(`audio/slide_${pad}.m4a`);
+    fallback.onplay = audio.onplay;
+    fallback.onended = audio.onended;
+    fallback.onerror = function() { isSpeaking = false; document.getElementById('audioWave').classList.add('paused'); };
+    currentAudio = fallback;
+    setTimeout(() => fallback.play().catch(() => {}), 100);
+  };
   currentAudio = audio;
 
   audio.onplay = () => {

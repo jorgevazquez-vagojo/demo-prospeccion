@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Redegal - Sistema Inteligente de Prospección Comercial</title>
 <link rel="stylesheet" href="styles.v2.css?v=3">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -1101,43 +1101,19 @@
     <!-- MIDDLE ROW: Pipeline por línea + Funnel + Activity -->
     <div style="display:grid; grid-template-columns:1.2fr 0.8fr 1fr; gap:12px; width:100%; max-width:1200px; margin-bottom:14px;">
 
-      <!-- Pipeline por línea -->
+      <!-- Pipeline por línea — Donut Chart -->
       <div class="analysis-card" data-delay="400" style="padding:18px;">
-        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:12px;">PIPELINE POR LÍNEA DE NEGOCIO</div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:var(--boostic); font-weight:600;">Boostic</span>
-            <span style="color:var(--text-dim);">387 leads · <strong style="color:var(--text-bright);">420K€</strong></span>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:8px;">PIPELINE POR LÍNEA DE NEGOCIO</div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div style="width:140px; height:140px; flex-shrink:0;">
+            <canvas id="chartPipeline"></canvas>
           </div>
-          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
-            <div style="width:75%; height:100%; background:var(--boostic); border-radius:4px;"></div>
-          </div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:var(--tech); font-weight:600;">Digital Tech</span>
-            <span style="color:var(--text-dim);">214 leads · <strong style="color:var(--text-bright);">380K€</strong></span>
-          </div>
-          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
-            <div style="width:65%; height:100%; background:var(--tech); border-radius:4px;"></div>
-          </div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:var(--digital); font-weight:600;">Digital Agency</span>
-            <span style="color:var(--text-dim);">298 leads · <strong style="color:var(--text-bright);">260K€</strong></span>
-          </div>
-          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
-            <div style="width:50%; height:100%; background:var(--digital); border-radius:4px;"></div>
-          </div>
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
-            <span style="color:var(--binnacle); font-weight:600;">Binnacle</span>
-            <span style="color:var(--text-dim);">143 leads · <strong style="color:var(--text-bright);">180K€</strong></span>
-          </div>
-          <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
-            <div style="width:35%; height:100%; background:var(--binnacle); border-radius:4px;"></div>
+          <div style="font-size:11px; color:var(--text); line-height:2.2;">
+            <div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#6636ce;margin-right:6px;"></span>Boostic <strong style="color:var(--text-bright);">420K€</strong></div>
+            <div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f97316;margin-right:6px;"></span>Tech <strong style="color:var(--text-bright);">380K€</strong></div>
+            <div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#10b981;margin-right:6px;"></span>Agency <strong style="color:var(--text-bright);">260K€</strong></div>
+            <div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#06b6d4;margin-right:6px;"></span>Binnacle <strong style="color:var(--text-bright);">180K€</strong></div>
+            <div style="margin-top:4px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.08); font-weight:700; color:#34d399;">Total: 1.24M€</div>
           </div>
         </div>
       </div>
@@ -1171,24 +1147,30 @@
       <!-- Activity feed + Noticias -->
       <div class="analysis-card" data-delay="800" style="padding:18px; overflow:hidden;">
         <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:12px;">ACTIVIDAD EN TIEMPO REAL</div>
-        <div style="font-size:12px; line-height:2; color:var(--text);">
-          <div style="border-left:2px solid var(--boostic); padding-left:10px; margin-bottom:6px;">
-            <span style="color:var(--text-dim);">14:32</span> · Casa del Libro respondió email Boostic — <span style="color:#34d399;">reunión agendada</span>
+        <div style="font-size:12px; line-height:1.8; color:var(--text);">
+          <div style="border-left:2px solid var(--boostic); padding-left:10px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <img src="img/casadellibro.png" alt="CdL" style="width:22px;height:22px;border-radius:4px;flex-shrink:0;">
+            <span><span style="color:var(--text-dim);">14:32</span> · <strong>Casa del Libro</strong> respondió email Boostic — <span style="color:#34d399;">reunión agendada</span></span>
           </div>
-          <div style="border-left:2px solid var(--tech); padding-left:10px; margin-bottom:6px;">
-            <span style="color:var(--text-dim);">13:15</span> · Gandhi abrió propuesta Tech — <span style="color:var(--tech-light);">3a lectura</span>
+          <div style="border-left:2px solid var(--tech); padding-left:10px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <img src="img/gandhi.png" alt="Gandhi" style="width:22px;height:22px;border-radius:4px;flex-shrink:0;">
+            <span><span style="color:var(--text-dim);">13:15</span> · <strong>Gandhi</strong> abrió propuesta Tech — <span style="color:var(--tech-light);">3a lectura</span></span>
           </div>
-          <div style="border-left:2px solid #f59e0b; padding-left:10px; margin-bottom:6px;">
-            <span style="color:var(--text-dim);">12:40</span> · 🟢 <strong>Acelerador:</strong> Padel Nuestro confirma expansión europea
+          <div style="border-left:2px solid #f59e0b; padding-left:10px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <span style="width:22px;height:22px;border-radius:4px;background:linear-gradient(135deg,#16a34a,#22c55e);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0;">PN</span>
+            <span><span style="color:var(--text-dim);">12:40</span> · 🟢 <strong>Padel Nuestro</strong> confirma expansión europea</span>
           </div>
-          <div style="border-left:2px solid var(--binnacle); padding-left:10px; margin-bottom:6px;">
-            <span style="color:var(--text-dim);">11:20</span> · De Online Drogist score Boostic 82 + Digital 74 — <span style="color:var(--binnacle-light);">cross-sell detectado</span>
+          <div style="border-left:2px solid var(--binnacle); padding-left:10px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <img src="img/deonlinedrogist.png" alt="DOD" style="width:22px;height:22px;border-radius:4px;flex-shrink:0;">
+            <span><span style="color:var(--text-dim);">11:20</span> · <strong>De Online Drogist</strong> cross-sell — <span style="color:var(--binnacle-light);">Boostic 82 + Digital 74</span></span>
           </div>
-          <div style="border-left:2px solid var(--digital); padding-left:10px; margin-bottom:6px;">
-            <span style="color:var(--text-dim);">10:05</span> · Mango conectó LinkedIn — <span style="color:var(--digital-light);">secuencia activa</span>
+          <div style="border-left:2px solid var(--digital); padding-left:10px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+            <img src="img/mango.png" alt="Mango" style="width:22px;height:22px;border-radius:4px;flex-shrink:0;">
+            <span><span style="color:var(--text-dim);">10:05</span> · <strong>Mango</strong> conectó LinkedIn — <span style="color:var(--digital-light);">secuencia activa</span></span>
           </div>
-          <div style="border-left:2px solid #f87171; padding-left:10px;">
-            <span style="color:var(--text-dim);">09:30</span> · 🔴 <strong>Stopper:</strong> Prospect #412 ERE anunciado — <span style="color:#f87171;">pausado</span>
+          <div style="border-left:2px solid #f87171; padding-left:10px; display:flex; align-items:center; gap:8px;">
+            <span style="width:22px;height:22px;border-radius:4px;background:rgba(248,113,113,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">⚠</span>
+            <span><span style="color:var(--text-dim);">09:30</span> · 🔴 Prospect #412 ERE anunciado — <span style="color:#f87171;">pausado</span></span>
           </div>
         </div>
       </div>
@@ -1295,7 +1277,10 @@
       <!-- Company Profile -->
       <div class="analysis-card" data-delay="200" style="padding:16px;">
         <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">PERFIL EMPRESA</div>
-        <div style="font-size:18px; font-weight:800; color:var(--text-bright); margin-bottom:8px;">Padel Nuestro</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <span style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#16a34a,#22c55e);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0;">PN</span>
+          <div style="font-size:18px; font-weight:800; color:var(--text-bright);">Padel Nuestro</div>
+        </div>
         <div class="data-row"><span class="data-label">Sector</span><span class="data-value">Deportes / Retail</span></div>
         <div class="data-row"><span class="data-label">País</span><span class="data-value">España (+ expansión EU)</span></div>
         <div class="data-row"><span class="data-label">Empleados</span><span class="data-value good">250</span></div>
@@ -1305,26 +1290,13 @@
         <div class="data-row"><span class="data-label">Fase</span><span class="data-value" style="color:#34d399;">Propuesta enviada</span></div>
       </div>
 
-      <!-- Score Breakdown -->
+      <!-- Score Breakdown — Radar Chart -->
       <div class="analysis-card" data-delay="400" style="padding:16px;">
-        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">SCORE MULTI-LÍNEA</div>
-        <div style="margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--boostic);">Boostic</span><strong style="color:var(--text-bright);">85</strong></div>
-          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:85%; height:100%; background:var(--boostic); border-radius:3px;"></div></div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:6px;">SCORE MULTI-LÍNEA</div>
+        <div style="height:165px;">
+          <canvas id="chartRadar"></canvas>
         </div>
-        <div style="margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--digital);">Digital Business</span><strong style="color:var(--text-bright);">76</strong></div>
-          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:76%; height:100%; background:var(--digital); border-radius:3px;"></div></div>
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--tech);">Digital Tech</span><strong style="color:var(--text-bright);">72</strong></div>
-          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:72%; height:100%; background:var(--tech); border-radius:3px;"></div></div>
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;"><span style="color:var(--binnacle);">Binnacle</span><strong style="color:var(--text-bright);">60</strong></div>
-          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:60%; height:100%; background:var(--binnacle); border-radius:3px;"></div></div>
-        </div>
-        <div style="margin-top:10px; padding:8px; background:rgba(52,211,153,0.08); border-radius:6px; text-align:center;">
+        <div style="margin-top:6px; padding:8px; background:rgba(52,211,153,0.08); border-radius:6px; text-align:center;">
           <span style="font-size:11px; color:var(--text-dim);">Ticket combinado</span><br>
           <strong style="font-size:18px; color:#34d399;">150 - 310K€</strong>
         </div>
@@ -1437,85 +1409,58 @@
     <h1 class="slide-title" style="font-size:30px; margin-bottom:14px;">Análisis Avanzado y <span class="accent">Reporting Automático</span></h1>
 
     <div style="display:grid; grid-template-columns:1.2fr 0.8fr 1fr; gap:12px; width:100%; max-width:1200px; margin-bottom:12px;">
-      <!-- Top Opportunities Ranking -->
+      <!-- Top Opportunities Ranking con logos -->
       <div class="analysis-card" data-delay="200" style="padding:16px;">
         <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">TOP OPORTUNIDADES · ESTA SEMANA</div>
         <div style="font-size:11px; color:var(--text);">
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(52,211,153,0.08); border-radius:6px; margin-bottom:6px;">
-            <span style="font-size:16px; font-weight:900; color:#34d399; width:28px;">1</span>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(52,211,153,0.08); border-radius:6px; margin-bottom:5px; gap:8px;">
+            <span style="font-size:14px; font-weight:900; color:#34d399; width:20px;">1</span>
+            <span style="width:24px;height:24px;border-radius:4px;background:linear-gradient(135deg,#16a34a,#22c55e);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0;">PN</span>
             <div style="flex:1;"><strong>Padel Nuestro</strong> · 3 líneas</div>
             <span style="color:#34d399; font-weight:700;">310K€</span>
           </div>
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(249,115,22,0.08); border-radius:6px; margin-bottom:6px;">
-            <span style="font-size:16px; font-weight:900; color:var(--tech); width:28px;">2</span>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(249,115,22,0.08); border-radius:6px; margin-bottom:5px; gap:8px;">
+            <span style="font-size:14px; font-weight:900; color:var(--tech); width:20px;">2</span>
+            <img src="img/gandhi.png" alt="Gandhi" style="width:24px;height:24px;border-radius:4px;flex-shrink:0;">
             <div style="flex:1;"><strong>Gandhi (MX)</strong> · Tech</div>
             <span style="color:var(--tech); font-weight:700;">200K€</span>
           </div>
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:6px;">
-            <span style="font-size:16px; font-weight:900; color:var(--boostic); width:28px;">3</span>
-            <div style="flex:1;"><strong>De Online Drogist</strong> · Boostic+Digital</div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:5px; gap:8px;">
+            <span style="font-size:14px; font-weight:900; color:var(--boostic); width:20px;">3</span>
+            <img src="img/deonlinedrogist.png" alt="DOD" style="width:24px;height:24px;border-radius:4px;flex-shrink:0;">
+            <div style="flex:1;"><strong>De Online Drogist</strong></div>
             <span style="color:var(--boostic); font-weight:700;">145K€</span>
           </div>
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(6,182,212,0.08); border-radius:6px; margin-bottom:6px;">
-            <span style="font-size:16px; font-weight:900; color:var(--binnacle); width:28px;">4</span>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(6,182,212,0.08); border-radius:6px; margin-bottom:5px; gap:8px;">
+            <span style="font-size:14px; font-weight:900; color:var(--binnacle); width:20px;">4</span>
+            <img src="img/mango.png" alt="Mango" style="width:24px;height:24px;border-radius:4px;flex-shrink:0;">
             <div style="flex:1;"><strong>Mango</strong> · Binnacle</div>
             <span style="color:var(--binnacle); font-weight:700;">120K€</span>
           </div>
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:6px;">
-            <span style="font-size:16px; font-weight:900; color:var(--boostic); width:28px;">5</span>
-            <div style="flex:1;"><strong>Casa del Libro</strong> · Boostic</div>
+          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(102,54,206,0.08); border-radius:6px; margin-bottom:5px; gap:8px;">
+            <span style="font-size:14px; font-weight:900; color:var(--boostic); width:20px;">5</span>
+            <img src="img/casadellibro.png" alt="CdL" style="width:24px;height:24px;border-radius:4px;flex-shrink:0;">
+            <div style="flex:1;"><strong>Casa del Libro</strong></div>
             <span style="color:var(--boostic); font-weight:700;">95K€</span>
           </div>
-          <div style="display:flex; align-items:center; padding:6px 8px; background:rgba(16,185,129,0.08); border-radius:6px;">
-            <span style="font-size:16px; font-weight:900; color:var(--digital); width:28px;">6</span>
-            <div style="flex:1;"><strong>Padel Nuestro</strong> · Agency</div>
-            <span style="color:var(--digital); font-weight:700;">15K€/m</span>
-          </div>
         </div>
       </div>
 
-      <!-- Sector Analysis -->
+      <!-- Sector Analysis — Chart.js horizontal bar -->
       <div class="analysis-card" data-delay="400" style="padding:16px;">
-        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">ANÁLISIS POR SECTOR</div>
-        <div style="font-size:11px; color:var(--text);">
-          <div style="margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Retail / eCommerce</span><strong style="color:#34d399;">312 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:75%; height:100%; background:#34d399; border-radius:3px;"></div></div>
-          </div>
-          <div style="margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Banca / Fintech</span><strong style="color:var(--binnacle);">186 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:45%; height:100%; background:var(--binnacle); border-radius:3px;"></div></div>
-          </div>
-          <div style="margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Health / Pharma</span><strong style="color:var(--digital);">148 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:36%; height:100%; background:var(--digital); border-radius:3px;"></div></div>
-          </div>
-          <div style="margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Moda / Lifestyle</span><strong style="color:var(--tech);">127 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:30%; height:100%; background:var(--tech); border-radius:3px;"></div></div>
-          </div>
-          <div style="margin-bottom:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Industria / B2B</span><strong style="color:var(--boostic);">98 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:24%; height:100%; background:var(--boostic); border-radius:3px;"></div></div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Otros</span><strong style="color:var(--text-dim);">171 leads</strong></div>
-            <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:3px;"><div style="width:41%; height:100%; background:var(--text-dim); border-radius:3px;"></div></div>
-          </div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:8px;">ANÁLISIS POR SECTOR</div>
+        <div style="height:180px;">
+          <canvas id="chartSector"></canvas>
         </div>
       </div>
 
-      <!-- Trends + Reports -->
+      <!-- Trends chart + Reports -->
       <div class="analysis-card" data-delay="600" style="padding:16px;">
-        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:10px;">TENDENCIAS MES A MES</div>
-        <div style="font-size:11px; color:var(--text); margin-bottom:12px;">
-          <div class="data-row"><span class="data-label">Leads nuevos</span><span class="data-value good">+23% vs enero</span></div>
-          <div class="data-row"><span class="data-label">Scoring medio</span><span class="data-value good">68 (+5pts)</span></div>
-          <div class="data-row"><span class="data-label">Tasa respuesta</span><span class="data-value good">14.2% (+3.1pp)</span></div>
-          <div class="data-row"><span class="data-label">Pipeline</span><span class="data-value good">+340K€ (+28%)</span></div>
-          <div class="data-row"><span class="data-label">Cross-sell</span><span class="data-value good">8 detectados (+5)</span></div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin-bottom:6px;">TENDENCIA PIPELINE (6M)</div>
+        <div style="height:100px; margin-bottom:10px;">
+          <canvas id="chartTrend"></canvas>
         </div>
-        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin:8px 0 8px;">INFORMES AUTOMÁTICOS</div>
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-dim); margin:6px 0 6px;">INFORMES AUTOMÁTICOS</div>
         <div style="font-size:11px; color:var(--text);">
           <div style="padding:5px 8px; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.15); border-radius:6px; margin-bottom:4px; cursor:pointer;">
             📄 <strong>Informe Semanal</strong> <span style="color:var(--text-dim); float:right;">Auto · Lunes 9:00</span>
@@ -1714,6 +1659,179 @@
     ext: '.svg',
     base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
   });
+</script>
+<script>
+// ==================== CHART.JS — Dashboard Charts ====================
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+
+let chartsInitialized = {};
+
+function initCharts(slideIndex) {
+  // Slide 14: Dashboard CEO — Donut Pipeline
+  if (slideIndex === 14 && !chartsInitialized[14]) {
+    chartsInitialized[14] = true;
+    const ctx = document.getElementById('chartPipeline');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Boostic', 'Digital Tech', 'Digital Agency', 'Binnacle'],
+          datasets: [{
+            data: [420, 380, 260, 180],
+            backgroundColor: ['#6636ce', '#f97316', '#10b981', '#06b6d4'],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '55%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => `${c.label}: ${c.raw}K€`
+              }
+            }
+          },
+          animation: { animateRotate: true, duration: 1200 }
+        }
+      });
+    }
+  }
+
+  // Slide 16: Análisis — Sector bar chart
+  if (slideIndex === 16 && !chartsInitialized['16sector']) {
+    chartsInitialized['16sector'] = true;
+    const ctx = document.getElementById('chartSector');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Retail', 'Banca', 'Otros', 'Health', 'Moda', 'B2B'],
+          datasets: [{
+            data: [312, 186, 171, 148, 127, 98],
+            backgroundColor: ['#34d399', '#06b6d4', '#64748b', '#10b981', '#f97316', '#6636ce'],
+            borderRadius: 4,
+            barThickness: 18
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { callback: (v) => v + ' leads' } },
+            y: { grid: { display: false } }
+          },
+          animation: { duration: 1000 }
+        }
+      });
+    }
+  }
+
+  // Slide 16: Análisis — Trend line chart
+  if (slideIndex === 16 && !chartsInitialized['16trend']) {
+    chartsInitialized['16trend'] = true;
+    const ctx = document.getElementById('chartTrend');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb'],
+          datasets: [
+            {
+              label: 'Pipeline (K€)',
+              data: [180, 340, 520, 680, 900, 1240],
+              borderColor: '#34d399',
+              backgroundColor: 'rgba(52,211,153,0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointBackgroundColor: '#34d399'
+            },
+            {
+              label: 'Leads',
+              data: [85, 156, 290, 480, 780, 1042],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59,130,246,0.08)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointBackgroundColor: '#3b82f6'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, position: 'top', labels: { boxWidth: 10, padding: 8, font: { size: 9 } } }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { display: false }
+          },
+          animation: { duration: 1200 }
+        }
+      });
+    }
+  }
+
+  // Slide 15: Ficha Prospect — Radar chart
+  if (slideIndex === 15 && !chartsInitialized[15]) {
+    chartsInitialized[15] = true;
+    const ctx = document.getElementById('chartRadar');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Boostic', 'Digital Biz', 'Digital Tech', 'Binnacle'],
+          datasets: [{
+            label: 'Score',
+            data: [85, 76, 72, 60],
+            backgroundColor: 'rgba(59,130,246,0.15)',
+            borderColor: '#3b82f6',
+            borderWidth: 2,
+            pointBackgroundColor: ['#6636ce', '#10b981', '#f97316', '#06b6d4'],
+            pointBorderColor: '#fff',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { stepSize: 25, font: { size: 9 }, backdropColor: 'transparent' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              angleLines: { color: 'rgba(255,255,255,0.06)' },
+              pointLabels: { font: { size: 10 }, color: '#e2e8f0' }
+            }
+          },
+          animation: { duration: 1000 }
+        }
+      });
+    }
+  }
+}
+
+// Hook into showSlide to init charts
+const _origShowSlide = showSlide;
+showSlide = function(index) {
+  _origShowSlide(index);
+  setTimeout(() => initCharts(index), 300);
+};
+// Init charts for first visible slide if it's a dashboard
+setTimeout(() => initCharts(currentSlide), 500);
 </script>
 </body>
 </html>
